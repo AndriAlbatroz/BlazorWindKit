@@ -6,7 +6,7 @@ An open-source Razor Class Library for building **TailwindCSS utility classes** 
 
 ## 🚀 Purpose
 
-**Tailwind.Blazor** helps you generate TailwindCSS classes programmatically in Blazor apps, offering:
+**BlazorWindKit** helps you generate TailwindCSS classes programmatically in Blazor apps, offering:
 
 - Strongly-typed enums for colors, shades, layout, spacing, and more
 - Fluent syntax for intuitive use
@@ -18,7 +18,7 @@ An open-source Razor Class Library for building **TailwindCSS utility classes** 
 ## ✨ Example
 
 ```csharp
-var classes = TailwindClassBuilder.Create()
+var css = TailwindClassBuilder.Create()
     .BgColor(TwColor.Blue, TwShade._600, 50)
     .TextColor(TwColor.White)
     .Rounded("lg")
