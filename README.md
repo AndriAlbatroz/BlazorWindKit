@@ -30,7 +30,7 @@ var classes = TailwindClassBuilder.Create()
 // Result: "bg-blue-600/50 text-white rounded-lg shadow-md sm:px-4 hover:bg-blue-700"
 ```
 
-📄 License
+## 📄 License
 This software is free for personal and non-commercial use only.
 A commercial license is required for business or commercial purposes.
 Please contact me at [dev@micheliandrea.com].
