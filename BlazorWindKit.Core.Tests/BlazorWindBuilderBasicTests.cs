@@ -6,7 +6,7 @@ namespace BlazorWindKit.Core.Tests;
 
 public class BlazorWindBuilderBasicTests
 {
-    [Fact]
+    [Fact] 
     public void Create_ReturnsNewInstance()
     {
         var builder = BlazorWindBuilder.Create();
