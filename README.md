@@ -1,21 +1,26 @@
 # BlazorWindKit
 
-An open-source Razor Class Library for building **TailwindCSS utility classes** in **Blazor** using a fluent, type-safe API.
+An open-source Razor Class Library for building TailwindCSS utility classes in Blazor using a fluent, type-safe API.
 
----
+## Overview
 
-## 🚀 Purpose
+BlazorWindKit provides a powerful solution for generating TailwindCSS classes programmatically in Blazor applications. The library offers:
 
-**BlazorWindKit** helps you generate TailwindCSS classes programmatically in Blazor apps, offering:
+- Strongly-typed enums for colors, shades, layout, and spacing
+- Intuitive fluent syntax
+- Support for responsive and state variants (sm:, hover:, etc.)
+- Comprehensive class generation including opacity modifiers
 
-- Strongly-typed enums for colors, shades, layout, spacing, and more
-- Fluent syntax for intuitive use
-- Responsive and state variants like `sm:`, `hover:`, etc.
-- Support for classes like `bg-blue-600/50`, `text-red-400`, `rounded-lg`, `shadow-md`
+## Features
 
----
+- Type-safe color and shade management
+- Responsive design utilities
+- State variant support
+- Opacity modifiers
+- Layout and spacing controls
+- Shadow and border utilities
 
-## ✨ Example
+## Usage Example
 
 ```csharp
 var css = TailwindClassBuilder.Create()
@@ -30,7 +35,8 @@ var css = TailwindClassBuilder.Create()
 // Result: "bg-blue-600/50 text-white rounded-lg shadow-md sm:px-4 hover:bg-blue-700"
 ```
 
-## 📄 License
+## License
+
 This software is free for personal and non-commercial use only.
 A commercial license is required for business or commercial purposes.
-Please contact me at [dev@micheliandrea.com].
+For licensing inquiries, please contact: dev@micheliandrea.com
