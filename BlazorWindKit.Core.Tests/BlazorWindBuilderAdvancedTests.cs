@@ -8,7 +8,7 @@ public class BlazorWindBuilderAdvancedTests
 {
     [Fact]
     public void CreateButton_WithHoverAndFocus_AddsCorrectClasses()
-    {
+    { 
         var builder = BlazorWindBuilder.Create();
         builder
             .BackgroundColor(TwColor.Blue, 600)
