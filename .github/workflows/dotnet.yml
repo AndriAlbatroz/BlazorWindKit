@@ -1,13 +1,18 @@
 name: CI, Pack & Publish
 
 on:
-  # CI e test su branch main e PR
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: read    # per checkout e fetch
+  packages: write   # per pubblicare su GitHub Packages
 
 jobs:
   test:
@@ -35,13 +40,19 @@ jobs:
   pack-and-publish:
     name: 📦 Pack & Publish
     needs: test
-    # esegui solo se il ref è un tag "v*"
+    # esegue solo sui ref che sono tag v*
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: 'Debug: stampa ref'
+        run: |
+          echo "EVENT_NAME: $GITHUB_EVENT_NAME"
+          echo "GITHUB_REF:   $GITHUB_REF"
+          echo "GITHUB_REF_NAME: $GITHUB_REF_NAME"
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
@@ -55,7 +66,6 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Pack NuGet package
-        # usa il tag come versione del pacchetto
         run: |
           dotnet pack BlazorWindKit/BlazorWindKit.Core.csproj \
             --configuration Release \
