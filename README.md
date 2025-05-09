@@ -10,7 +10,7 @@ BlazorWindKit provides a powerful solution for generating TailwindCSS classes pr
 - Intuitive fluent syntax
 - Support for responsive and state variants (sm:, hover:, etc.)
 - Comprehensive class generation including opacity modifiers
-
+ 
 ## Features
 
 - Type-safe color and shade management
