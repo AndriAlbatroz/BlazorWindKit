@@ -1,6 +1,6 @@
 name: CI & Publish
 
-# Per vedere i messaggi ::debug::, aggiungi nel tuo repo Settings → Secrets:
+# Per vedere i messaggi ::debug::, imposta questi secret:
 # ACTIONS_STEP_DEBUG=true
 # ACTIONS_RUNNER_DEBUG=true
 
@@ -8,6 +8,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
@@ -55,6 +57,7 @@ jobs:
     name: 📦 Pack & Publish
     needs: test
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')   # ← esegue solo sui tag v*
 
     steps:
       - name: Checkout repository
