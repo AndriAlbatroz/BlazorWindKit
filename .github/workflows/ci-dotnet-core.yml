@@ -1,4 +1,4 @@
-name: CI & Publish
+name: CI BlazorWindKit.Core
 
 # Per vedere i messaggi ::debug::, imposta questi secret:
 # ACTIONS_STEP_DEBUG=true
@@ -38,13 +38,19 @@ jobs:
       - name: Restore dependencies
         run: |
           echo "::group::🔧 Dotnet Restore"
-          dotnet restore --verbosity minimal
+          dotnet restore BlazorWindKit.Core --verbosity minimal
           echo "::endgroup::"
 
-      - name: Build solution
+      - name: Build BlazorWindKit.Core
         run: |
           echo "::group::🔨 Dotnet Build"
-          dotnet build --configuration Release --no-restore --verbosity minimal
+          dotnet build BlazorWindKit.Core --configuration Release --no-restore --verbosity minimal
+          echo "::endgroup::"
+
+      - name: Build BlazorWindKit.Core.Tests
+        run: |
+          echo "::group::🔨 Dotnet Build"
+          dotnet build BlazorWindKit.Core.Tests --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Run unit tests
