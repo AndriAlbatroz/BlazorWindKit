@@ -86,21 +86,27 @@ jobs:
       - name: Add .dotnet/tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Extract version from Nerdbank.GitVersioning
-        id: gitversion
+      - name: Extract version from Git tag
         run: |
-          echo "::group::🧭 Extracting version"
-          VERSION=$(nbgv get-version -v SemVer2 | tr -d '\r')
+          echo "::group::🧭 Extracting version from tag"
+          VERSION=${GITHUB_REF#refs/tags/v}
           if [ -z "$VERSION" ]; then
-            echo "❌ Version is empty. Failing the build."
+            echo "❌ Tag version is empty. Failing."
             exit 1
           fi
           echo "Extracted version: $VERSION"
           echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
           echo "::endgroup::"
 
-      - name: Debug: Show extracted version
-        run: echo "✅ Package version = $PACKAGE_VERSION"
+      - name: Pack NuGet package
+        run: |
+          echo "::group::📦 Pack BlazorWindKit.Core"
+          dotnet pack BlazorWindKit.Core/BlazorWindKit.Core.csproj \
+            --configuration Release \
+            --no-build \
+            --output ./artifacts \
+            -p:PackageVersion=${{ env.PACKAGE_VERSION }}
+          echo "::endgroup::"
 
       - name: Restore dependencies
         run: |
