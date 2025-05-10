@@ -1,9 +1,5 @@
 name: CI BlazorWindKit.Core
 
-# Per vedere i messaggi ::debug::, imposta questi secret:
-# ACTIONS_STEP_DEBUG=true
-# ACTIONS_RUNNER_DEBUG=true
-
 on:
   push:
     branches:
@@ -35,35 +31,41 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Restore dependencies
+      - name: Restore dependencies (Core)
         run: |
-          echo "::group::🔧 Dotnet Restore"
-          dotnet restore BlazorWindKit.Core --verbosity minimal
+          echo "::group::🔧 Dotnet Restore (Core)"
+          dotnet restore BlazorWindKit.Core/BlazorWindKit.Core.csproj --verbosity minimal
+          echo "::endgroup::"
+
+      - name: Restore dependencies (Core.Tests)
+        run: |
+          echo "::group::🔧 Dotnet Restore (Core.Tests)"
+          dotnet restore BlazorWindKit.Core.Tests/BlazorWindKit.Core.Tests.csproj --verbosity minimal
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core
         run: |
-          echo "::group::🔨 Dotnet Build"
-          dotnet build BlazorWindKit.Core --configuration Release --no-restore --verbosity minimal
+          echo "::group::🔨 Dotnet Build Core"
+          dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core.Tests
         run: |
-          echo "::group::🔨 Dotnet Build"
-          dotnet build BlazorWindKit.Core.Tests --configuration Release --no-restore --verbosity minimal
+          echo "::group::🔨 Dotnet Build Core.Tests"
+          dotnet build BlazorWindKit.Core.Tests/BlazorWindKit.Core.Tests.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Run unit tests
         run: |
           echo "::group::🧪 Dotnet Test"
-          dotnet test --configuration Release --no-build --no-restore --verbosity normal
+          dotnet test BlazorWindKit.Core.Tests/BlazorWindKit.Core.Tests.csproj --configuration Release --no-build --no-restore --verbosity normal
           echo "::endgroup::"
 
   pack-and-publish:
     name: 📦 Pack & Publish
     needs: test
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')   # ← esegue solo sui tag v*
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - name: Checkout repository
@@ -74,39 +76,30 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: "Debug: print refs"
-        run: |
-          echo "::debug::EVENT_NAME: $GITHUB_EVENT_NAME"
-          echo "::debug::GITHUB_REF: $GITHUB_REF"
-          echo "::debug::GITHUB_REF_NAME: $GITHUB_REF_NAME"
-
       - name: Restore dependencies
         run: |
           echo "::group::🔧 Dotnet Restore"
-          dotnet restore --verbosity minimal
+          dotnet restore BlazorWindKit.Core/BlazorWindKit.Core.csproj --verbosity minimal
           echo "::endgroup::"
 
-      - name: Build solution
+      - name: Build BlazorWindKit.Core
         run: |
           echo "::group::🔨 Dotnet Build"
-          dotnet build --configuration Release --no-restore --verbosity minimal
+          dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Pack NuGet package
         run: |
           echo "::group::📦 Dotnet Pack"
-          echo "::debug::Starting pack step"
           dotnet pack BlazorWindKit.Core/BlazorWindKit.Core.csproj \
             --configuration Release \
             --no-build \
             --output ./artifacts \
-            --verbosity diag
-          echo "::debug::Pack complete, artifacts in ./artifacts"
+            --verbosity minimal
           echo "::endgroup::"
 
       - name: Configure GitHub Packages source
         run: |
-          echo "::debug::Configuring GitHub Packages source"
           dotnet nuget add source \
             --username ${{ github.actor }} \
             --password ${{ secrets.GITHUB_TOKEN }} \
@@ -116,7 +109,6 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: |
-          echo "::debug::Publishing package to GitHub Packages"
           dotnet nuget push ./artifacts/*.nupkg \
             --source github \
             --api-key ${{ secrets.GITHUB_TOKEN }}
