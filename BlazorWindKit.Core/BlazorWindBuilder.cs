@@ -16,7 +16,7 @@ public class BlazorWindBuilder
 
     public BlazorWindBuilder Add(string cssClass)
     {
-        if (!string.IsNullOrWhiteSpace(cssClass))
+        if (!string.IsNullOrWhiteSpace(cssClass)) 
         {
             _classes.Add(cssClass);
         } 
