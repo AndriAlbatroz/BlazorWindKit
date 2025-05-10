@@ -31,6 +31,34 @@ public class BlazorWindBuilder
         }
         return this;
     }
+    
+    public BlazorWindBuilder When(bool condition, Func<BlazorWindBuilder, BlazorWindBuilder> builder)
+    {
+        if (condition)
+        {
+            var innerBuilder = new BlazorWindBuilder();
+            var result = builder(innerBuilder);
+            foreach (var cls in result._classes)
+            {
+                _classes.Add(cls);
+            }
+        }
+        return this;
+    }
+
+    public BlazorWindBuilder When(Func<bool> condition, Func<BlazorWindBuilder, BlazorWindBuilder> builder)
+    {
+        if (condition())
+        {
+            var innerBuilder = new BlazorWindBuilder();
+            var result = builder(innerBuilder);
+            foreach (var cls in result._classes)
+            {
+                _classes.Add(cls);
+            }
+        }
+        return this;
+    }
 
     public BlazorWindBuilder Custom(string rawCssClass) => Add(rawCssClass);
 

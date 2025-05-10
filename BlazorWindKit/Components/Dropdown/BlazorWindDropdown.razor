@@ -1,4 +1,4 @@
-@* 
+
 @using BlazorWindKit.Core;
 @using BlazorWindKit.Core.Enums;
 @using Microsoft.JSInterop
@@ -220,10 +220,10 @@
         .PaddingX(3)
         .PaddingY(4)
         .TextColor(TwColor.Gray, 500)
-        .FontSize(TwTextSize.TextSm)
+        .FontSize(TwTextSize.Sm)
         .Custom("cursor-default")
         .Sm(s => s
-            .FontSize(TwTextSize.TextBase)
+            .FontSize(TwTextSize.Base)
         );
 
     private BlazorWindBuilder DefaultMenuStyle()
@@ -240,9 +240,9 @@
                    .Shadow(8)
                    .PaddingY(1)
                    .Transition(TwTransition.All)
-                   .Custom("focus:outline-none transform-gpu")
+                   .Focus(b => b.Outline(TwOutline.None).Transform(TwTransform.Gpu))
                    .Sm(s => s
-                       .Custom("w-56")
+                       .Width(56)
                    );
 
             switch (Direction)
@@ -358,4 +358,4 @@
         GC.SuppressFinalize(this);
     }
     #endregion
-}  *@
+} 

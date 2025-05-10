@@ -6,6 +6,22 @@ namespace BlazorWindKit.Core.Tests;
 
 public class BlazorWindBuilderBasicTests
 {
+    [Fact]
+    public void When()
+    {
+        bool isBackBlue = false;
+
+        var builder = BlazorWindBuilder.Create();
+        builder.When((b) =>
+        {
+            b.BackgroundColor(TwColor.Blue);
+
+            return isBackBlue;
+        });
+
+        Assert.Equal("bg-blue", builder.Build());
+    }
+
     [Fact]  
     public void Create_ReturnsNewInstance()
     {
