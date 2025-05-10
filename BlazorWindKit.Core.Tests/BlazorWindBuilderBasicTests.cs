@@ -6,21 +6,47 @@ namespace BlazorWindKit.Core.Tests;
 
 public class BlazorWindBuilderBasicTests
 {
+
     [Fact]
     public void When()
+    {
+        bool isBackBlue = true;
+
+        var builder = BlazorWindBuilder.Create();
+        builder.When(isBackBlue, (b) => { return b.BackgroundColor(TwColor.Blue); });
+
+        Assert.Equal("bg-blue", builder.Build());
+    }
+
+    [Fact]
+    public void WhenNot()
     {
         bool isBackBlue = false;
 
         var builder = BlazorWindBuilder.Create();
-        builder.When((b) =>
-        {
-            b.BackgroundColor(TwColor.Blue);
+        builder.When(isBackBlue, (b) => { return b.BackgroundColor(TwColor.Blue); });
 
-            return isBackBlue;
-        });
+        Assert.NotEqual("bg-blue", builder.Build());
+    }
+
+    [Fact]
+    public void WhenFunc()
+    {
+        var builder = BlazorWindBuilder.Create();
+        builder.When(() => { return 1 == 1; }, (b) => { return b.BackgroundColor(TwColor.Blue); });
 
         Assert.Equal("bg-blue", builder.Build());
     }
+
+    [Fact]
+    public void WhenFuncNot()
+    {
+        var builder = BlazorWindBuilder.Create();
+        builder.When(() => { return 1 == 1; }, (b) => { return b.BackgroundColor(TwColor.Blue); });
+
+        Assert.NotEqual("bg-blue", builder.Build());
+    }
+
 
     [Fact]  
     public void Create_ReturnsNewInstance()
