@@ -16,7 +16,7 @@ public class BlazorWindBuilderAdvancedTests
             .Padding(3)
             .PaddingX(6)
             .BorderRadius(6)
-            .FontWeight(TwFontWeight.FontMedium)
+            .FontWeight(TwFontWeight.Medium)
             .Hover(b => b
                 .BackgroundColor(TwColor.Blue, 700)
                 .Transform(TwTransform.Gpu)
@@ -64,7 +64,7 @@ public class BlazorWindBuilderAdvancedTests
             .Active(b => b
                 .BackgroundColor(TwColor.Blue, 500)
                 .TextColor(TwColor.White)
-                .FontWeight(TwFontWeight.FontBold));
+                .FontWeight(TwFontWeight.Bold));
 
         var expected = "flex gap-4 p-4 bg-gray-100 active:bg-blue-500 active:text-white active:font-bold";
         Assert.Equal(expected, builder.Build());
