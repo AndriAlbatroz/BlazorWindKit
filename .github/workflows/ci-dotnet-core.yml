@@ -31,9 +31,6 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Set version from tag
-        run: echo "GitVersion=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-
       - name: Restore dependencies (BlazorWindKit.Core)
         run: |
           echo "::group::🔧 Restore BlazorWindKit.Core"
@@ -79,6 +76,20 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      - name: Install Nerdbank.GitVersioning CLI
+        run: dotnet tool install --global nbgv
+
+      - name: Add .dotnet/tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Extract version from Nerdbank.GitVersioning
+        id: gitversion
+        run: |
+          echo "::group::🧭 Extracting version"
+          VERSION=$(nbgv get-version -v SemVer2)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "::endgroup::"
+
       - name: Restore dependencies
         run: |
           echo "::group::🔧 Restore BlazorWindKit.Core"
@@ -91,14 +102,6 @@ jobs:
           dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
-      - name: Extract version from Nerdbank.GitVersioning
-        id: gitversion
-        run: |
-          echo "##[group]🧭 Extracting version"
-          VERSION=$(dotnet nbgv get-version -v SemVer2)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "##[endgroup]"
-
       - name: Pack NuGet package
         run: |
           echo "::group::📦 Pack BlazorWindKit.Core"
@@ -106,7 +109,6 @@ jobs:
             --configuration Release \
             --no-build \
             --output ./artifacts \
-            --verbosity minimal
             -p:Version=${{ env.VERSION }}
           echo "::endgroup::"
 
