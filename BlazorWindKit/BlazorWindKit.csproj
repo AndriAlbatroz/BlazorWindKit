@@ -12,12 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorWindKit.Core" Version="1.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <ProjectReference Include="..\BlazorWindKit.Core\BlazorWindKit.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,27 +12,3 @@ public class TailwindClassAttribute : Attribute
         ClassName = className;
     }
 }
-
-public enum TailwindCategory
-{
-    None,
-    Backdrop,
-    Blend,
-    Color,
-    Divide,
-    Fill,
-    Ring,
-    RingOffset,
-    Stroke,
-    Transform,
-    Typography,
-    Layout,
-    Border,
-    Effect,
-    Transition,
-    Animation,
-    Interactivity,
-    Sizing,
-    Spacing,
-    Accessibility
-} 

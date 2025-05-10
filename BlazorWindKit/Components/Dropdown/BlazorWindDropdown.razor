@@ -1,10 +1,12 @@
-
 @using BlazorWindKit.Core;
 @using BlazorWindKit.Core.Enums;
 @using Microsoft.JSInterop
+@using BlazorWindKit.JsInterop
 
 @typeparam TItem
 @inherits OwningComponentBase
+
+@inject DropdownJsInterop DropdownJsInterop
 
 <div class="relative @(RootCssClass ?? "w-full")" @ref="DropdownRef">
     <button onclick="@ToggleDropdown" 
@@ -154,39 +156,29 @@
     #endregion
 
     #region Default Styles
+
     private static BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
-        .Display(TwDisplay.Flex)
-        .Items(TwAlignItems.Center)
-        .Justify(TwJustifyContent.Between)
-        .WidthFull()
-        .TextColor(TwColor.Gray, 700)
-        .PaddingX(3)
-        .PaddingY(2)
-        .BorderRadius(8)
-        .BackgroundColor(TwColor.White)
-        .BorderWidth(1)
-        .BorderColor(TwColor.Gray, 200)
-        .Shadow(1)
-        .Hover(h => h
+            .Display(TwDisplay.Flex)
+            .Items(TwAlignItems.Center)
+            .Gap(2)
+            .WidthFull()
+            .PaddingX(3)
+            .PaddingY(2)
+            .BackgroundColor(TwColor.White)
+            .BorderWidth(1)
             .BorderColor(TwColor.Gray, 300)
-            .Shadow(2)
-        )
-        .Focus(f => f
-            .BorderColor(TwColor.Blue, 400)
-            .Custom("outline-none ring-2 ring-blue-100")
-        )
-        .Transition(TwTransition.All)
-        .Custom("select-none")
-        .Disabled(d => d
-            .Opacity(50)
-            .Custom("cursor-not-allowed")
-        )
-        .Sm(s => s
-            .PaddingX(4)
-        );
+            .Rounded()
+            .TextColor(TwColor.Gray, 800)
+            .FontSize(TwTextSize.Sm)
+            .Shadow(1)
+            .Transition(TwTransition.Colors)
+            .Hover(b => b.BackgroundColor(TwColor.Gray, 100))
+            .Focus(b => b.Outline(TwOutline.None).Ring(2).RingColor(TwColor.Blue, 500))
+            .Sm(b => b.FontSize(TwTextSize.Base));
 
     private static BlazorWindBuilder DefaultTextStyle() => BlazorWindBuilder.Create()
         .FontSize(TwTextSize.Xl)
+        .TextColor(TwColor.Black)
         .Sm(s => s
             .FontSize(TwTextSize.Base)
         );
@@ -286,22 +278,17 @@
     {
         if (Disabled) return;
 
-        IsOpen = !IsOpen;
-        if (IsOpen)
+        if (!IsOpen)
         {
-            DotNetRef = DotNetObjectReference.Create(this);
-            _handler = await RegisterClickOutside();
+            await RegisterClickOutside();
         }
         else
         {
             await DisposeJs();
         }
-        StateHasChanged();
-    }
 
-    private async Task<IJSObjectReference> RegisterClickOutside()
-    {
-        return await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorWindKit/js/dropdown.js");
+        IsOpen = !IsOpen;
+        StateHasChanged();
     }
 
     private async Task SelectItem(TItem item)
@@ -322,8 +309,23 @@
         }
     }
 
+    private async Task RegisterClickOutside()
+    {
+        await DisposeJs(); // Ensure we clean up any existing handlers first
+        DotNetRef = DotNetObjectReference.Create(this);
+        _handler = await DropdownJsInterop.RegisterClickOutside(DropdownRef, DotNetRef);
+    }
+
     [JSInvokable]
-    public async Task CloseDropdown()
+    public async Task OnClickOutside()
+    {
+        if (IsOpen)
+        {
+            await CloseDropdown();
+        }
+    }
+
+    private async Task CloseDropdown()
     {
         if (IsOpen)
         {
@@ -332,9 +334,7 @@
             StateHasChanged();
         }
     }
-    #endregion
 
-    #region Lifecycle Methods
     private async Task DisposeJs()
     {
         if (_handler is not null)
@@ -348,10 +348,15 @@
             catch (InvalidOperationException) { /* Ignore */ }
             _handler = null;
         }
-        DotNetRef?.Dispose();
-        DotNetRef = null;
+        if (DotNetRef is not null)
+        {
+            DotNetRef.Dispose();
+            DotNetRef = null;
+        }
     }
+    #endregion
 
+    #region Lifecycle Methods
     public async ValueTask DisposeAsync()
     {
         await DisposeJs();

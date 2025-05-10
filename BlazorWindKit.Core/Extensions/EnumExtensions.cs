@@ -8,7 +8,7 @@ namespace BlazorWindKit.Core.Extensions;
 
 public static class EnumExtensions
 {
-    public static string ToTailwindClass(this Enum value, string? prefix = null)
+    public static string ToTailwindClass(this Enum value, string? prefix = null, params string[] stringFormat)
     {
         var attribute = value.GetType().GetField(value.ToString())?.GetCustomAttribute<TailwindClassAttribute>();
 
@@ -16,8 +16,15 @@ public static class EnumExtensions
         {
             return value.ToString().ToLower();
         }
-        
-        return string.IsNullOrEmpty(prefix) ? attribute.ClassName : $"{prefix}-{attribute.ClassName}";
+
+        string css = attribute.ClassName;
+
+        if (stringFormat.Length > 0) 
+        {
+            css = string.Format(attribute.ClassName, stringFormat);
+        }
+
+        return string.IsNullOrEmpty(prefix) ? css : $"{prefix}-{css}";
     }
 
     public static string ToTailwindClass(this TwColor color, string? prefix = null, int? shade = null, double? opacity = null)

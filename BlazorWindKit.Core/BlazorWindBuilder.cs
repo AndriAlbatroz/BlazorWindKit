@@ -186,6 +186,7 @@ public class BlazorWindBuilder
 
     public BlazorWindBuilder Width(int value) => Add($"w-{value}");
     public BlazorWindBuilder Height(int value) => Add($"h-{value}");
+
     public BlazorWindBuilder MinWidth(int value) => Add($"min-w-{value}");
     public BlazorWindBuilder MaxWidth(int value) => Add($"max-w-{value}");
     public BlazorWindBuilder MinHeight(int value) => Add($"min-h-{value}");
@@ -198,6 +199,20 @@ public class BlazorWindBuilder
     public BlazorWindBuilder WidthMin() => Add("w-min");
     public BlazorWindBuilder WidthMax() => Add("w-max");
     public BlazorWindBuilder WidthFit() => Add("w-fit");
+
+    public BlazorWindBuilder HeightFull() => Add("h-full");
+
+    #endregion
+
+    #region Rounded 
+
+    public BlazorWindBuilder Rounded() => Add("rounded");
+    public BlazorWindBuilder Rounded(TwRounded rounded) => Add(rounded.ToTailwindClass());
+    public BlazorWindBuilder Rounded(int value) => Add($"rounded-{value}");
+    public BlazorWindBuilder RoundedTop(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-t" }));
+    public BlazorWindBuilder RoundedBottom(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-b" }));
+    public BlazorWindBuilder RoundedRight(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-r" }));
+    public BlazorWindBuilder RoundedLeft(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-l" }));
 
     #endregion
 

@@ -4,18 +4,18 @@ namespace BlazorWindKit.Core.Enums;
 
 public enum TwRounded
 {
-    [TailwindClass("rounded-none")]
+    [TailwindClass("rounded{0}-none")]
     None,
-    [TailwindClass("rounded-sm")]
+    [TailwindClass("rounded{0}-sm")]
     Sm,
-    [TailwindClass("rounded-md")]
+    [TailwindClass("rounded{0}-md")]
     Md,
-    [TailwindClass("rounded-lg")]
+    [TailwindClass("rounded{0}-lg")]
     Lg,
-    [TailwindClass("rounded-xl")]
+    [TailwindClass("rounded{0}-xl")]
     Xl,
-    [TailwindClass("rounded-2xl")]
+    [TailwindClass("rounded{0}-2xl")]
     TwoXl,
-    [TailwindClass("rounded-full")]
+    [TailwindClass("rounded{0}-full")]
     Full
 }
