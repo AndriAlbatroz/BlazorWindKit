@@ -19,7 +19,7 @@ public class BlazorWindBuilderBasicTests
         var builder = BlazorWindBuilder.Create();
         builder.Add("test-class");
         Assert.Equal("test-class", builder.Build());
-    }
+    } 
 
     [Fact]
     public void Add_WithCondition_AddsClassWhenTrue()
