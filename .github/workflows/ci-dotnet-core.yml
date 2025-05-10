@@ -86,9 +86,17 @@ jobs:
         id: gitversion
         run: |
           echo "::group::🧭 Extracting version"
-          VERSION=$(nbgv get-version -v SemVer2)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          VERSION=$(nbgv get-version -v SemVer2 | tr -d '\r')
+          if [ -z "$VERSION" ]; then
+            echo "❌ Version is empty. Failing the build."
+            exit 1
+          fi
+          echo "Extracted version: $VERSION"
+          echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
           echo "::endgroup::"
+
+      - name: Debug
+        run: echo "✅ Package version = $PACKAGE_VERSION"
 
       - name: Restore dependencies
         run: |
@@ -97,7 +105,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core
-        run: |
+        run: 
           echo "::group::🔨 Build BlazorWindKit.Core"
           dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
@@ -109,7 +117,7 @@ jobs:
             --configuration Release \
             --no-build \
             --output ./artifacts \
-            -p:Version=${{ env.VERSION }}
+            -p:PackageVersion=${{ env.PACKAGE_VERSION }}
           echo "::endgroup::"
 
       - name: Configure GitHub Packages source
