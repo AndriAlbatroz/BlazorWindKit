@@ -31,33 +31,33 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Restore dependencies (Core)
+      - name: Restore dependencies (BlazorWindKit.Core)
         run: |
-          echo "::group::🔧 Dotnet Restore (Core)"
+          echo "::group::🔧 Restore BlazorWindKit.Core"
           dotnet restore BlazorWindKit.Core/BlazorWindKit.Core.csproj --verbosity minimal
           echo "::endgroup::"
 
-      - name: Restore dependencies (Core.Tests)
+      - name: Restore dependencies (BlazorWindKit.Core.Tests)
         run: |
-          echo "::group::🔧 Dotnet Restore (Core.Tests)"
+          echo "::group::🔧 Restore BlazorWindKit.Core.Tests"
           dotnet restore BlazorWindKit.Core.Tests/BlazorWindKit.Core.Tests.csproj --verbosity minimal
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core
         run: |
-          echo "::group::🔨 Dotnet Build Core"
+          echo "::group::🔨 Build BlazorWindKit.Core"
           dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core.Tests
         run: |
-          echo "::group::🔨 Dotnet Build Core.Tests"
+          echo "::group::🔨 Build BlazorWindKit.Core.Tests"
           dotnet build BlazorWindKit.Core.Tests/BlazorWindKit.Core.Tests.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Run unit tests
         run: |
-          echo "::group::🧪 Dotnet Test"
+          echo "::group::🧪 Run Tests"
           dotnet test BlazorWindKit.Core.Tests/BlazorWindKit.Core.Tests.csproj --configuration Release --no-build --no-restore --verbosity normal
           echo "::endgroup::"
 
@@ -78,19 +78,19 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          echo "::group::🔧 Dotnet Restore"
+          echo "::group::🔧 Restore BlazorWindKit.Core"
           dotnet restore BlazorWindKit.Core/BlazorWindKit.Core.csproj --verbosity minimal
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core
         run: |
-          echo "::group::🔨 Dotnet Build"
+          echo "::group::🔨 Build BlazorWindKit.Core"
           dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
 
       - name: Pack NuGet package
         run: |
-          echo "::group::📦 Dotnet Pack"
+          echo "::group::📦 Pack BlazorWindKit.Core"
           dotnet pack BlazorWindKit.Core/BlazorWindKit.Core.csproj \
             --configuration Release \
             --no-build \
