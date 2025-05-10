@@ -42,7 +42,7 @@ public class BlazorWindBuilderBasicTests
     public void WhenFuncNot()
     {
         var builder = BlazorWindBuilder.Create();
-        builder.When(() => { return 1 == 1; }, (b) => { return b.BackgroundColor(TwColor.Blue); });
+        builder.When(() => { return 1 != 1; }, (b) => { return b.BackgroundColor(TwColor.Blue); });
 
         Assert.NotEqual("bg-blue", builder.Build());
     }
