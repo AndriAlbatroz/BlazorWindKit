@@ -15,7 +15,7 @@ public enum TwTextSize
 
     [TailwindClass("text-lg")]
     Lg,
-
+     
     [TailwindClass("text-xl")]
     Xl,
 
