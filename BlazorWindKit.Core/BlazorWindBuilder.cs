@@ -19,7 +19,7 @@ public class BlazorWindBuilder
         if (!string.IsNullOrWhiteSpace(cssClass))
         {
             _classes.Add(cssClass);
-        }
+        } 
         return this;
     }
 
