@@ -31,6 +31,9 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      - name: Set version from tag
+        run: echo "GitVersion=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
       - name: Restore dependencies (BlazorWindKit.Core)
         run: |
           echo "::group::🔧 Restore BlazorWindKit.Core"
@@ -93,6 +96,7 @@ jobs:
           echo "::group::📦 Pack BlazorWindKit.Core"
           dotnet pack BlazorWindKit.Core/BlazorWindKit.Core.csproj \
             --configuration Release \
+            -p:Version=${{ env.GitVersion }} \
             --no-build \
             --output ./artifacts \
             --verbosity minimal
