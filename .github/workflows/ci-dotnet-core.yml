@@ -23,8 +23,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (full clone)
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
@@ -68,8 +70,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (full clone)
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
@@ -95,7 +99,7 @@ jobs:
           echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
           echo "::endgroup::"
 
-      - name: Debug
+      - name: Debug: Show extracted version
         run: echo "✅ Package version = $PACKAGE_VERSION"
 
       - name: Restore dependencies
@@ -105,7 +109,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Build BlazorWindKit.Core
-        run: 
+        run: |
           echo "::group::🔨 Build BlazorWindKit.Core"
           dotnet build BlazorWindKit.Core/BlazorWindKit.Core.csproj --configuration Release --no-restore --verbosity minimal
           echo "::endgroup::"
