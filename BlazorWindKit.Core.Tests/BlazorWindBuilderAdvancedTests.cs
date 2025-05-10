@@ -143,7 +143,7 @@ public class BlazorWindBuilderAdvancedTests
             .TextColor(TwColor.White)
             .Padding(2)
             .BorderRadius(4)
-            .FontSize(TwTextSize.TextSm)
+            .FontSize(TwTextSize.Sm)
             .Whitespace(TwWhitespace.NoWrap)
             .Transform(TwTransform.Gpu)
             .Scale(0);

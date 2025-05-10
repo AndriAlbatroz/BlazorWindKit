@@ -5,89 +5,90 @@ namespace BlazorWindKit.Core.Enums;
 public enum TwTextSize
 {
     [TailwindClass("text-xs")]
-    TextXs,
+    Xs,
 
     [TailwindClass("text-sm")]
-    TextSm,
+    Sm,
 
     [TailwindClass("text-base")]
-    TextBase,
+    Base,
 
     [TailwindClass("text-lg")]
-    TextLg,
+    Lg,
 
     [TailwindClass("text-xl")]
-    TextXl,
+    Xl,
 
     [TailwindClass("text-2xl")]
-    Text2Xl,
+    Xl2,
 
     [TailwindClass("text-3xl")]
-    Text3Xl,
+    Xl3,
 
     [TailwindClass("text-4xl")]
-    Text4Xl,
+    Xl4,
 
     [TailwindClass("text-5xl")]
-    Text5Xl,
+    Xl5,
 
     [TailwindClass("text-6xl")]
-    Text6Xl,
+    Xl6,
 
     [TailwindClass("text-7xl")]
-    Text7Xl,
+
+    Xl7,
 
     [TailwindClass("text-8xl")]
-    Text8Xl,
+    Xl8,
 
     [TailwindClass("text-9xl")]
-    Text9Xl,
+    Xl9,
 }
 
 public enum TwFontWeight
 {
     [TailwindClass("font-thin")]
-    FontThin,
+    Thin,
 
     [TailwindClass("font-extralight")]
-    FontExtralight,
+    Extralight,
 
     [TailwindClass("font-light")]
-    FontLight,
+    Light,
 
     [TailwindClass("font-normal")]
-    FontNormal,
+    Normal,
 
     [TailwindClass("font-medium")]
-    FontMedium,
+    Medium,
 
     [TailwindClass("font-semibold")]
-    FontSemibold,
+    Semibold,
 
     [TailwindClass("font-bold")]
-    FontBold,
+    Bold,
 
     [TailwindClass("font-extrabold")]
-    FontExtrabold,
+    Extrabold,
 
     [TailwindClass("font-black")]
-    FontBlack,
+    Black,
 }
 
 public enum TwTextAlign
 {
 
     [TailwindClass("text-left")]
-    TextLeft,
+    Left,
 
     [TailwindClass("text-center")]
-    TextCenter,
+    Center,
 
     [TailwindClass("text-right")]
-    TextRight,
+    Right,
 
     [TailwindClass("text-justify")]
-    TextJustify,
+    Justify,
 }
 
 public enum TwTextTypography

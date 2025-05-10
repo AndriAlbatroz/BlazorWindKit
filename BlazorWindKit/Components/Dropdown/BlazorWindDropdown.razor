@@ -1,0 +1,361 @@
+@* BlazorWindDropdown.razor *@
+@using BlazorWindKit.Core;
+@using BlazorWindKit.Core.Enums;
+@using Microsoft.JSInterop
+
+@typeparam TItem
+@inherits OwningComponentBase
+
+<div class="relative @(RootCssClass ?? "w-full")" @ref="DropdownRef">
+    <button onclick="@ToggleDropdown" 
+            type="button" 
+            class="@ToggleCss"
+            disabled="@Disabled"
+            aria-expanded="@IsOpen"
+            aria-haspopup="listbox"
+            aria-controls="@MenuId">
+        <span class="flex items-center justify-between w-full @TextCss">
+            <span class="block truncate text-inherit">@SelectedText</span>
+            <svg class="w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-150 text-inherit"
+                 style="@((IsOpen ? "transform: rotate(180deg);" : null))"
+                 fill="none" 
+                 stroke="currentColor" 
+                 stroke-width="2" 
+                 viewBox="0 0 24 24"
+                 aria-hidden="true">
+                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </span>
+    </button>
+
+    <div id="@MenuId"
+         class="@MenuCss"
+         role="listbox"
+         aria-label="@AriaLabel"
+         style="max-height:@(IsOpen ? MenuMaxHeightWhenOpen : "0px"); 
+                opacity:@(IsOpen ? "1" : "0"); 
+                transform:@(IsOpen ? "scale(1)" : "scale(0.95)");
+                @(MenuDisplayMode == TwDropdownMenuDisplayMode.Overlay && !string.IsNullOrWhiteSpace(MenuMaxHeightWhenOpen) ? "overflow-y: auto;" : "")">
+        @if (Items?.Any() == true)
+        {
+            @foreach (var item in Items)
+            {
+                var isSelected = EqualityComparer<TItem>.Default.Equals(item, Value);
+                <button onclick="@(() => SelectItem(item))" 
+                        class="@ItemCss"
+                        role="option"
+                        aria-selected="@isSelected">
+                    @if (ItemTemplate is not null)
+                    {
+                        @ItemTemplate(item)
+                    }
+                    else
+                    {
+                        <span class="block truncate text-inherit">@ItemToString(item)</span>
+                    }
+                </button>
+            }
+        }
+        else if (EmptyTemplate is not null)
+        {
+            @EmptyTemplate
+        }
+        else
+        {
+            <div class="@EmptyCss" role="status">
+                @EmptyText
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
+
+    #region Data Parameters
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] public TItem? Value { get; set; }
+    [Parameter] public EventCallback<TItem?> ValueChanged { get; set; }
+    [Parameter] public string Placeholder { get; set; } = "Select...";
+    [Parameter] public Func<TItem, string>? ItemTextSelector { get; set; }
+    [Parameter] public Func<TItem, TItem, bool>? ItemComparer { get; set; }
+    #endregion
+
+    #region Template Parameters
+    [Parameter] public RenderFragment<TItem>? ItemTemplate { get; set; }
+    [Parameter] public RenderFragment? EmptyTemplate { get; set; }
+    #endregion
+
+    #region Style Parameters
+    [Parameter] public string? RootCssClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? ToggleButtonClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? MenuClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? ItemClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? TextClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? EmptyClass { get; set; }
+    #endregion
+
+    #region Style Override Parameters
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultToggleButtonClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultMenuClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultItemClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultTextClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultEmptyClass { get; set; }
+    #endregion
+
+    #region Behavior Parameters
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool CloseOnSelect { get; set; } = true;
+    [Parameter] public TwDropdownMenuDisplayMode MenuDisplayMode { get; set; } = TwDropdownMenuDisplayMode.Overlay;
+    [Parameter] public string MenuMaxHeightWhenOpen { get; set; } = "15rem";
+    [Parameter] public TwDropdownDirection Direction { get; set; } = TwDropdownDirection.BottomLeft;
+    [Parameter] public int AnimationDuration { get; set; } = 150;
+    #endregion
+
+    #region Accessibility Parameters
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public string? MenuId { get; set; } = $"dropdown-menu-{Guid.NewGuid()}";
+    #endregion
+
+    #region Empty State Parameters
+    [Parameter] public string EmptyText { get; set; } = "No items available";
+    #endregion
+
+    #region State
+    private bool IsOpen { get; set; }
+    private ElementReference DropdownRef { get; set; }
+    private DotNetObjectReference<BlazorWindDropdown<TItem>>? DotNetRef { get; set; }
+    private IJSObjectReference? _handler { get; set; }
+    #endregion
+
+    #region Computed Properties
+    private string SelectedText => Value is null ? Placeholder : ItemToString(Value);
+    private string ItemToString(TItem? item) => item is null ? "" : (ItemTextSelector?.Invoke(item) ?? item.ToString() ?? "");
+
+    private string ToggleCss => (ToggleButtonClass?.Invoke(BlazorWindBuilder.Create()) ??
+                               (OverrideDefaultToggleButtonClass?.Invoke(DefaultToggleStyle()) ?? 
+                                DefaultToggleStyle())).Build();
+
+    private string MenuCss => (MenuClass?.Invoke(BlazorWindBuilder.Create()) ??
+                             (OverrideDefaultMenuClass?.Invoke(DefaultMenuStyle()) ?? 
+                              DefaultMenuStyle())).Build();
+
+    private string ItemCss => (ItemClass?.Invoke(BlazorWindBuilder.Create()) ??
+                             (OverrideDefaultItemClass?.Invoke(DefaultItemStyle()) ?? 
+                              DefaultItemStyle())).Build();
+
+    private string TextCss => (TextClass?.Invoke(BlazorWindBuilder.Create()) ??
+                             (OverrideDefaultTextClass?.Invoke(DefaultTextStyle()) ?? 
+                              DefaultTextStyle())).Build();
+
+    private string EmptyCss => (EmptyClass?.Invoke(BlazorWindBuilder.Create()) ??
+                              (OverrideDefaultEmptyClass?.Invoke(DefaultEmptyStyle()) ?? 
+                               DefaultEmptyStyle())).Build();
+    #endregion
+
+    #region Default Styles
+    private static BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
+        .Display(TwDisplay.Flex)
+        .Items(TwAlignItems.Center)
+        .Justify(TwJustifyContent.Between)
+        .WidthFull()
+        .TextColor(TwColor.Gray, 700)
+        .PaddingX(3)
+        .PaddingY(2)
+        .BorderRadius(8)
+        .BackgroundColor(TwColor.White)
+        .BorderWidth(1)
+        .BorderColor(TwColor.Gray, 200)
+        .Shadow(1)
+        .Hover(h => h
+            .BorderColor(TwColor.Gray, 300)
+            .Shadow(2)
+        )
+        .Focus(f => f
+            .BorderColor(TwColor.Blue, 400)
+            .Custom("outline-none ring-2 ring-blue-100")
+        )
+        .Transition(TwTransition.All)
+        .Custom("select-none")
+        .Disabled(d => d
+            .Opacity(50)
+            .Custom("cursor-not-allowed")
+        )
+        .Sm(s => s
+            .PaddingX(4)
+        );
+
+    private static BlazorWindBuilder DefaultTextStyle() => BlazorWindBuilder.Create()
+        .FontSize(TwTextSize.Xl)
+        .Sm(s => s
+            .FontSize(TwTextSize.Base)
+        );
+
+    private static BlazorWindBuilder DefaultItemStyle() => BlazorWindBuilder.Create()
+        .Display(TwDisplay.Flex)
+        .Items(TwAlignItems.Center)
+        .Justify(TwJustifyContent.Between)
+        .WidthFull()
+        .PaddingX(3)
+        .PaddingY(2)
+        .TextAlign(TwTextAlign.Left)
+        .Transition(TwTransition.Colors)
+        .Custom("cursor-pointer select-none")
+        .Hover(h => h
+            .BackgroundColor(TwColor.Gray, 50)
+        )
+        .Focus(f => f
+            .BackgroundColor(TwColor.Blue, 50)
+            .Custom("outline-none")
+        )
+        .Sm(s => s
+            .PaddingX(4)
+        );
+
+    private static BlazorWindBuilder DefaultEmptyStyle() => BlazorWindBuilder.Create()
+        .Display(TwDisplay.Flex)
+        .Items(TwAlignItems.Center)
+        .Justify(TwJustifyContent.Center)
+        .WidthFull()
+        .PaddingX(3)
+        .PaddingY(4)
+        .TextColor(TwColor.Gray, 500)
+        .FontSize(TwTextSize.TextSm)
+        .Custom("cursor-default")
+        .Sm(s => s
+            .FontSize(TwTextSize.TextBase)
+        );
+
+    private BlazorWindBuilder DefaultMenuStyle()
+    {
+        var builder = BlazorWindBuilder.Create();
+
+        if (MenuDisplayMode == TwDropdownMenuDisplayMode.Overlay)
+        {
+            builder.Custom("absolute z-50 w-full")
+                   .BorderRadius(6)
+                   .BackgroundColor(TwColor.White)
+                   .BorderWidth(1)
+                   .BorderColor(TwColor.Gray, 200)
+                   .Shadow(8)
+                   .PaddingY(1)
+                   .Transition(TwTransition.All)
+                   .Custom("focus:outline-none transform-gpu")
+                   .Sm(s => s
+                       .Custom("w-56")
+                   );
+
+            switch (Direction)
+            {
+                case TwDropdownDirection.TopLeft:
+                    builder.Custom("bottom-full mb-1 origin-bottom-left left-0");
+                    break;
+                case TwDropdownDirection.TopRight:
+                    builder.Custom("bottom-full mb-1 origin-bottom-right right-0");
+                    break;
+                case TwDropdownDirection.BottomRight:
+                    builder.Custom("top-full mt-1 origin-top-right right-0");
+                    break;
+                case TwDropdownDirection.BottomLeft:
+                default:
+                    builder.Custom("top-full mt-1 origin-top-left left-0");
+                    break;
+            }
+        }
+        else // InFlowPush
+        {
+            builder.Custom("w-full overflow-hidden")
+                   .BackgroundColor(TwColor.White)
+                   .BorderWidth(1)
+                   .BorderColor(TwColor.Gray, 200)
+                   .BorderRadius(6)
+                   .Shadow(4)
+                   .Transition(TwTransition.All)
+                   .Custom("ease-out")
+                   .Custom("sticky top-0")
+                   .Sm(s => s
+                       .Custom("max-w-md mx-auto")
+                   );
+        }
+        return builder;
+    }
+    #endregion
+
+    #region Event Handlers
+    private async Task ToggleDropdown()
+    {
+        if (Disabled) return;
+
+        IsOpen = !IsOpen;
+        if (IsOpen)
+        {
+            DotNetRef = DotNetObjectReference.Create(this);
+            _handler = await RegisterClickOutside();
+        }
+        else
+        {
+            await DisposeJs();
+        }
+        StateHasChanged();
+    }
+
+    private async Task<IJSObjectReference> RegisterClickOutside()
+    {
+        return await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorWindKit/js/dropdown.js");
+    }
+
+    private async Task SelectItem(TItem item)
+    {
+        if (Disabled) return;
+
+        var oldValue = Value;
+        Value = item;
+        
+        if (!EqualityComparer<TItem>.Default.Equals(oldValue, Value))
+        {
+            await ValueChanged.InvokeAsync(Value);
+        }
+
+        if (CloseOnSelect)
+        {
+            await CloseDropdown();
+        }
+    }
+
+    [JSInvokable]
+    public async Task CloseDropdown()
+    {
+        if (IsOpen)
+        {
+            IsOpen = false;
+            await DisposeJs();
+            StateHasChanged();
+        }
+    }
+    #endregion
+
+    #region Lifecycle Methods
+    private async Task DisposeJs()
+    {
+        if (_handler is not null)
+        {
+            try
+            {
+                await _handler.InvokeVoidAsync("dispose");
+                await _handler.DisposeAsync();
+            }
+            catch (JSDisconnectedException) { /* Ignore */ }
+            catch (InvalidOperationException) { /* Ignore */ }
+            _handler = null;
+        }
+        DotNetRef?.Dispose();
+        DotNetRef = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeJs();
+        GC.SuppressFinalize(this);
+    }
+    #endregion
+} 

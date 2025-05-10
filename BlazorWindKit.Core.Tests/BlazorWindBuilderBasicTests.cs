@@ -97,7 +97,7 @@ public class BlazorWindBuilderBasicTests
     public void Typography_AddsTypographyClass()
     {
         var builder = BlazorWindBuilder.Create();
-        builder.FontSize(TwTextSize.TextLg);
+        builder.FontSize(TwTextSize.Lg);
         Assert.Equal("text-lg", builder.Build());
     }
 
