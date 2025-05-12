@@ -238,11 +238,6 @@ public class BlazorWindBuilder
     public BlazorWindBuilder BorderRightWidth(int value) => Add(value == 1 ? "border-r" : $"border-r-{value}");
     public BlazorWindBuilder BorderBottomWidth(int value) => Add(value == 1 ? "border-b" : $"border-b-{value}");
     public BlazorWindBuilder BorderLeftWidth(int value) => Add(value == 1 ? "border-l" : $"border-l-{value}");
-    public BlazorWindBuilder BorderRadius(int value) => Add($"rounded-{value}");
-    public BlazorWindBuilder BorderTopLeftRadius(int value) => Add($"rounded-tl-{value}");
-    public BlazorWindBuilder BorderTopRightRadius(int value) => Add($"rounded-tr-{value}");
-    public BlazorWindBuilder BorderBottomLeftRadius(int value) => Add($"rounded-bl-{value}");
-    public BlazorWindBuilder BorderBottomRightRadius(int value) => Add($"rounded-br-{value}");
     public BlazorWindBuilder Shadow(int value) => Add(value == 1 ? "shadow" : $"shadow-{value}");
 
     #endregion

@@ -18,8 +18,7 @@
             aria-controls="@MenuId">
         <span class="flex items-center justify-between w-full @TextCss">
             <span class="block truncate text-inherit">@SelectedText</span>
-            <svg class="w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-150 text-inherit"
-                 style="@((IsOpen ? "transform: rotate(180deg);" : null))"
+            <svg class="w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-150 text-inherit @(IsOpen ? "rotate-180" : "")"
                  fill="none" 
                  stroke="currentColor" 
                  stroke-width="2" 
@@ -44,9 +43,9 @@
             {
                 var isSelected = EqualityComparer<TItem>.Default.Equals(item, Value);
                 <button onclick="@(() => SelectItem(item))" 
-                        class="@ItemCss"
-                        role="option"
-                        aria-selected="@isSelected">
+                class="@ItemCss"
+                role="option"
+                aria-selected="@isSelected">
                     @if (ItemTemplate is not null)
                     {
                         @ItemTemplate(item)
@@ -157,65 +156,91 @@
 
     #region Default Styles
 
-    private static BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
+    private BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
             .Display(TwDisplay.Flex)
             .Items(TwAlignItems.Center)
-            .Gap(2)
+            .Gap(3)
             .WidthFull()
-            .PaddingX(3)
+            .PaddingX(4)
             .PaddingY(2)
             .BackgroundColor(TwColor.White)
             .BorderWidth(1)
-            .BorderColor(TwColor.Gray, 300)
-            .Rounded()
+            .BorderColor(TwColor.Gray, 200)
             .TextColor(TwColor.Gray, 800)
             .FontSize(TwTextSize.Sm)
-            .Shadow(1)
-            .Transition(TwTransition.Colors)
-            .Hover(b => b.BackgroundColor(TwColor.Gray, 100))
-            .Focus(b => b.Outline(TwOutline.None).Ring(2).RingColor(TwColor.Blue, 500))
-            .Sm(b => b.FontSize(TwTextSize.Base));
+            .FontWeight(TwFontWeight.Medium)
+            .Custom("shadow-sm")
+            .Transition(TwTransition.All)
+            .Custom("duration-200 ease-in-out")
+            .Rounded(TwRounded.Md)
+            .Hover(b => b
+                .BackgroundColor(TwColor.Gray, 50)
+                .BorderColor(TwColor.Gray, 300)
+                .Custom("shadow-md")
+            )
+            .Focus(b => b
+                .Outline(TwOutline.None)
+                .Ring(2)
+                .RingColor(TwColor.Blue, 500, 10)
+                .BorderColor(TwColor.Blue, 400)
+                .Custom("shadow-md")
+            )
+            .Disabled(b => b
+                .Opacity(60)
+                .Custom("cursor-not-allowed")
+                .Custom("shadow-none")
+            );
 
-    private static BlazorWindBuilder DefaultTextStyle() => BlazorWindBuilder.Create()
-        .FontSize(TwTextSize.Xl)
-        .TextColor(TwColor.Black)
+    private BlazorWindBuilder DefaultTextStyle() => BlazorWindBuilder.Create()
+        .FontSize(TwTextSize.Sm)
+        .TextColor(TwColor.Gray, 800)
+        .FontWeight(TwFontWeight.Medium)
+        .Custom("tracking-wide")
         .Sm(s => s
             .FontSize(TwTextSize.Base)
         );
 
-    private static BlazorWindBuilder DefaultItemStyle() => BlazorWindBuilder.Create()
+    private BlazorWindBuilder DefaultItemStyle() => BlazorWindBuilder.Create()
         .Display(TwDisplay.Flex)
         .Items(TwAlignItems.Center)
         .Justify(TwJustifyContent.Between)
         .WidthFull()
-        .PaddingX(3)
+        .PaddingX(4)
         .PaddingY(2)
         .TextAlign(TwTextAlign.Left)
-        .Transition(TwTransition.Colors)
-        .Custom("cursor-pointer select-none")
+        .TextColor(TwColor.Gray, 700)
+        .FontSize(TwTextSize.Sm)
+        .FontWeight(TwFontWeight.Medium)
+        .Transition(TwTransition.All)
+        .Custom("duration-150 ease-in-out cursor-pointer select-none")
         .Hover(h => h
             .BackgroundColor(TwColor.Gray, 50)
+            .TextColor(TwColor.Gray, 900)
+            .Custom("translate-x-1")
         )
         .Focus(f => f
             .BackgroundColor(TwColor.Blue, 50)
-            .Custom("outline-none")
+            .TextColor(TwColor.Blue, 700)
+            .Custom("outline-none translate-x-1")
         )
         .Sm(s => s
-            .PaddingX(4)
+            .PaddingX(5)
+            .PaddingY(3)
         );
 
-    private static BlazorWindBuilder DefaultEmptyStyle() => BlazorWindBuilder.Create()
+    private BlazorWindBuilder DefaultEmptyStyle() => BlazorWindBuilder.Create()
         .Display(TwDisplay.Flex)
         .Items(TwAlignItems.Center)
         .Justify(TwJustifyContent.Center)
         .WidthFull()
-        .PaddingX(3)
-        .PaddingY(4)
-        .TextColor(TwColor.Gray, 500)
+        .PaddingX(4)
+        .PaddingY(8)
+        .TextColor(TwColor.Gray, 400)
         .FontSize(TwTextSize.Sm)
+        .FontWeight(TwFontWeight.Medium)
         .Custom("cursor-default")
         .Sm(s => s
-            .FontSize(TwTextSize.Base)
+            .PaddingY(10)
         );
 
     private BlazorWindBuilder DefaultMenuStyle()
@@ -225,45 +250,54 @@
         if (MenuDisplayMode == TwDropdownMenuDisplayMode.Overlay)
         {
             builder.Custom("absolute z-50 w-full")
-                   .BorderRadius(6)
+                   .Rounded(TwRounded.Md)
                    .BackgroundColor(TwColor.White)
                    .BorderWidth(1)
                    .BorderColor(TwColor.Gray, 200)
-                   .Shadow(8)
+                   .Custom("shadow-lg")
+                   .Custom("backdrop-blur-md bg-white/95")
                    .PaddingY(1)
                    .Transition(TwTransition.All)
-                   .Focus(b => b.Outline(TwOutline.None).Transform(TwTransform.Gpu))
+                   .Custom("duration-200 ease-in-out")
+                   .Custom("transform-gpu")
+                   .Focus(b => b
+                       .Outline(TwOutline.None)
+                       .Transform(TwTransform.Gpu)
+                   )
                    .Sm(s => s
-                       .Width(56)
+                       .Width(64)
+                       .Custom("min-w-[200px]")
                    );
 
             switch (Direction)
             {
                 case TwDropdownDirection.TopLeft:
-                    builder.Custom("bottom-full mb-1 origin-bottom-left left-0");
+                    builder.Custom("bottom-full mb-2 origin-bottom-left left-0");
                     break;
                 case TwDropdownDirection.TopRight:
-                    builder.Custom("bottom-full mb-1 origin-bottom-right right-0");
+                    builder.Custom("bottom-full mb-2 origin-bottom-right right-0");
                     break;
                 case TwDropdownDirection.BottomRight:
-                    builder.Custom("top-full mt-1 origin-top-right right-0");
+                    builder.Custom("top-full mt-2 origin-top-right right-0");
                     break;
                 case TwDropdownDirection.BottomLeft:
                 default:
-                    builder.Custom("top-full mt-1 origin-top-left left-0");
+                    builder.Custom("top-full mt-2 origin-top-left left-0");
                     break;
             }
         }
         else // InFlowPush
         {
             builder.Custom("w-full overflow-hidden")
-                   .BackgroundColor(TwColor.White)
+                   .MarginX(5)
+                   .BackgroundColor(TwColor.Gray, 200)
                    .BorderWidth(1)
-                   .BorderColor(TwColor.Gray, 200)
-                   .BorderRadius(6)
-                   .Shadow(4)
+                   .Rounded(TwRounded.Md)
+                   .Custom("shadow-lg")
+                   .Custom("backdrop-blur-md")
                    .Transition(TwTransition.All)
-                   .Custom("ease-out")
+                   .Custom("duration-200 ease-in-out")
+                   .Custom("transform-gpu")
                    .Custom("sticky top-0")
                    .Sm(s => s
                        .Custom("max-w-md mx-auto")
@@ -288,7 +322,7 @@
         }
 
         IsOpen = !IsOpen;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task SelectItem(TItem item)
@@ -331,7 +365,7 @@
         {
             IsOpen = false;
             await DisposeJs();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
     }
 

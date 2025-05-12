@@ -23,6 +23,10 @@ public static class EnumExtensions
         {
             css = string.Format(attribute.ClassName, stringFormat);
         }
+        else
+        {
+            css = attribute.ClassName.Replace("{0}", string.Empty);
+        }
 
         return string.IsNullOrEmpty(prefix) ? css : $"{prefix}-{css}";
     }
