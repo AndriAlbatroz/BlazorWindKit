@@ -1,0 +1,343 @@
+@page "/"
+
+@inject IJSRuntime js
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="flex flex-col w-full h-full overflow-auto">
+    <BlazorWindContainer GridColsSm="1" GridColsMd="2" GridColsLg="3" GridColsXl="3">
+        <BlazorWindCard OverrideDefaultRootClass="@((b) => { b.MinHeight("250px"); return b; })">
+            <HeaderTemplate>
+                <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Lg).FontWeight(TwFontWeight.Medium).TextColor(TwColor.White).Build())">Battute</span>
+            </HeaderTemplate>
+            <ChildContent>
+                <!-- Sezione Scavi -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).MarginBottom(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).Build())">
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Scavi</span>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).FontSize(TwTextSize.Lg).MarginRight(2).Build())">10</span>
+                            <div class="@(BlazorWindBuilder.Create()
+                                .When(10 >= 0, b => b.BackgroundColor(TwColor.Green, 100).TextColor(TwColor.Green, 700))
+                                .When(10 < 0, b => b.BackgroundColor(TwColor.Red, 100).TextColor(TwColor.Red, 700))
+                                .PaddingY(1).PaddingX(2).Rounded(TwRounded.Full).Display(TwDisplay.Flex).Items(TwAlignItems.Center).FontSize(TwTextSize.Sm).Build())">
+                                @if (10 < 0)
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(3).Width(3).MarginRight(1).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(3).Width(3).MarginRight(1).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                }
+                                <span>10%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sezione Totale scavato -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).MarginBottom(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).Build())">
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Totale scavato</span>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).FlexDirection(TwFlexDirection.Col).Items(TwAlignItems.End).Build())">
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).Build())">
+                                <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Lg).Build())">10</span>
+                                <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Sm).TextColor(TwColor.Gray, 600).Build())">m³</span>
+                            </div>
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 600).FontSize(TwTextSize.Sm).Build())">
+                                ~100 Kg
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sezione Ultima battuta -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).FlexDirection(TwFlexDirection.Col).Build())">
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).MarginBottom(2).Build())">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Ultima battuta</span>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).MarginLeft(7).Build())">
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 600).Build())">Ora:</div>
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).Build())">16:34</div>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).MarginLeft(7).Build())">
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 600).Build())">Volume/Peso:</div>
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).Build())">2m³ ~ 20Kg</div>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).MarginLeft(7).Build())">
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 600).Build())">Coordinate:</div>
+                            <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).Build())">40.0000 | 27.0000</div>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+            <FooterTemplate>
+                <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).WidthFull().Build())">
+                    <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Sm).TextColor(TwColor.Gray, 600).Build())">Ultimo aggiornamento: 16:30</span>
+                    <button class="@(BlazorWindBuilder.Create().TextColor(TwColor.Blue, 500).Cursor(TwInteractivity.CursorPointer).FontSize(TwTextSize.Sm).Hover(h => h.TextColor(TwColor.Blue, 700)).Custom("transition-colors").Build())">Aggiorna</button>
+                </div>
+            </FooterTemplate>
+        </BlazorWindCard>
+
+        <BlazorWindCard>
+            <HeaderTemplate>
+                <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Lg).FontWeight(TwFontWeight.Medium).TextColor(TwColor.White).Build())">Posizione</span>
+            </HeaderTemplate>
+            <ChildContent>
+                <!-- Visualizzazione coordinate GPS -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).MarginBottom(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).MarginBottom(2).Build())">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Coordinate Attuali</span>
+                    </div>
+
+                    <!-- Coordinate -->
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).FlexDirection(TwFlexDirection.Row).Build())">
+                        <!-- Pulsante copia entrambe le coordinate -->
+                        <button class="@(BlazorWindBuilder.Create().PaddingY(2).PaddingX(3).FontSize(TwTextSize.Sm).Rounded(TwRounded.Lg).Build())">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(4).Width(4).MarginRight(1).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+                                <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+                            </svg>
+                        </button>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Xs).FontWeight(TwFontWeight.SemiBold).TextColor(TwColor.Gray, 500).Custom("uppercase").MarginRight(2).Build())">Lat</span>
+                            <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Base).FontWeight(TwFontWeight.Medium).TextColor(TwColor.Gray, 800).Build())">40.7128°N</span>
+                        </div>
+
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Xs).FontWeight(TwFontWeight.SemiBold).TextColor(TwColor.Gray, 500).Custom("uppercase").MarginRight(2).Build())">Long</span>
+                            <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Base).FontWeight(TwFontWeight.Medium).TextColor(TwColor.Gray, 800).Build())">27.5643°E</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mappa Google con spazio maggiore -->
+                <div class="@(BlazorWindBuilder.Create().BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Overflow(TwOverflow.Hidden).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Padding(3).Build())">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Visualizzazione Mappa</span>
+                    </div>
+
+                    <!-- Contenitore mappa con altezza aumentata -->
+                    <div class="@(BlazorWindBuilder.Create().Position(TwPosition.Relative).Rounded().Height("300px").Overflow(TwOverflow.Hidden).Build())">
+                        <!-- Componente mappa Google correttamente configurato -->
+                        <DragoCloudWebApp.Components.Shared.GoogleMap 
+                            DragaLat="40.7128" 
+                            DragaLon="27.5643" 
+                            South="40.6128" 
+                            West="27.4643" 
+                            North="40.8128" 
+                            East="27.6643" 
+                            Base64Image="@MapImageBase64" />
+                    </div>
+                </div>
+            </ChildContent>
+            <FooterTemplate>
+                <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).WidthFull().Build())">
+                    <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Sm).TextColor(TwColor.Gray, 600).Build())">Ultimo aggiornamento: 16:32</span>
+                    <button class="@(BlazorWindBuilder.Create().TextColor(TwColor.Blue, 500).Cursor(TwInteractivity.CursorPointer).FontSize(TwTextSize.Sm).Hover(h => h.TextColor(TwColor.Blue, 700)).Custom("transition-colors").Build())" @onclick="GetCurrentLocation">Aggiorna posizione</button>
+                </div>
+            </FooterTemplate>
+        </BlazorWindCard>
+
+        <BlazorWindCard>
+            <HeaderTemplate>
+                <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Lg).FontWeight(TwFontWeight.Medium).TextColor(TwColor.White).Build())">Statistiche</span>
+            </HeaderTemplate>
+            <ChildContent>
+                <!-- Sezione Ore di Lavoro -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).MarginBottom(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).Build())">
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Ore di lavoro</span>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).FontSize(TwTextSize.Lg).MarginRight(2).Build())">6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sezione Produttività -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).MarginBottom(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).Build())">
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Build())">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Produttività</span>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).FontSize(TwTextSize.Lg).Build())">85%</div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="@(BlazorWindBuilder.Create().MarginTop(2).Custom("ml-7").Height(2).BackgroundColor(TwColor.Gray, 200).Rounded(TwRounded.Full).Build())">
+                        <div class="@(BlazorWindBuilder.Create().Height(2).BackgroundColor(TwColor.Blue, 500).Rounded(TwRounded.Full).Custom("w-[85%]").Build())"></div>
+                    </div>
+                </div>
+
+                <!-- Sezione Obiettivi -->
+                <div class="@(BlazorWindBuilder.Create().Padding(3).BackgroundColor(TwColor.Gray, 100).Rounded(TwRounded.Lg).Build())">
+                    <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).MarginBottom(2).Build())">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="@(BlazorWindBuilder.Create().Height(5).Width(5).TextColor(TwColor.Blue, 500).MarginRight(2).Build())" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                        </svg>
+                        <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 700).FontWeight(TwFontWeight.Medium).Build())">Obiettivi</span>
+                    </div>
+
+                    <div class="@(BlazorWindBuilder.Create().Custom("ml-7").Build())">
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Justify(TwJustifyContent.Between).MarginBottom(2).Build())">
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 600).Build())">Volume giornaliero</span>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).Build())">75/100 m³</span>
+                        </div>
+                        <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Items(TwAlignItems.Center).Justify(TwJustifyContent.Between).MarginBottom(2).Build())">
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 600).Build())">Ore completate</span>
+                            <span class="@(BlazorWindBuilder.Create().TextColor(TwColor.Gray, 800).FontWeight(TwFontWeight.SemiBold).Build())">6/8</span>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+            <FooterTemplate>
+                <div class="@(BlazorWindBuilder.Create().Display(TwDisplay.Flex).Justify(TwJustifyContent.Between).Items(TwAlignItems.Center).WidthFull().Build())">
+                    <span class="@(BlazorWindBuilder.Create().FontSize(TwTextSize.Sm).TextColor(TwColor.Gray, 600).Build())">Ultimo aggiornamento: 16:35</span>
+                    <button class="@(BlazorWindBuilder.Create().TextColor(TwColor.Blue, 500).Cursor(TwInteractivity.CursorPointer).FontSize(TwTextSize.Sm).Hover(h => h.TextColor(TwColor.Blue, 700)).Custom("transition-colors").Build())">Aggiorna</button>
+                </div>
+            </FooterTemplate>
+        </BlazorWindCard>
+
+    </BlazorWindContainer>
+
+    <BlazorWindContainer GridColsSm="1" GridColsLg="2">
+        <DxChart Data="@WWSalesData" Width="100%" Height="400px">
+            <DxChartTitle Text="World Wide Sales" />
+            <DxChartCommonSeries NameField="@((SaleInfo s) => s.Date.Year)"
+                                 ArgumentField="@(s => s.City)"
+                                 ValueField="@(s => s.Amount)"
+                                 SummaryMethod="Enumerable.Sum"
+                                 SeriesType="ChartSeriesType.Bar" />
+            <DxChartLegend Position="RelativePosition.Outside"
+                           HorizontalAlignment="HorizontalAlignment.Right" />
+            <DxChartTooltip Enabled="true" Position="RelativePosition.Outside">
+                <div class="m-2">
+                    <div class="fw-bold text-center">
+                        Year @context.Point.SeriesName
+                    </div>
+                    <div>
+                        @context.Point.Argument: @string.Format("{0:$0,.#K}", (int)context.Point.Value)
+                    </div>
+                </div>
+            </DxChartTooltip>
+        </DxChart>
+
+        <div class="w-full h-[400px] relative">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop"
+                 alt="Mappa del sito"
+                 class="w-full h-full object-cover rounded-lg" />
+            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                <span class="text-white text-xl font-semibold">Area di Scavo</span>
+            </div>
+        </div>
+    </BlazorWindContainer>
+</div>
+
+@code {
+    public class SaleInfo
+    {
+        public int OrderId { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public int Amount { get; set; }
+        public DateTime Date { get; set; }
+    }
+
+    class DonutDataItem
+    {
+        public int Year { get; }
+        public double Amount { get; }
+        public DonutDataItem(int year, double amount)
+        {
+            (Year, Amount) = (year, amount);
+        }
+    }
+
+    IEnumerable<SaleInfo> WWSalesData;
+
+    // Immagine in base64 per la mappa (placeholder)
+    private string MapImageBase64 = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Genera dati fake per il grafico
+        var random = new Random();
+        var cities = new[] { "Roma", "Milano", "Napoli", "Torino", "Palermo" };
+        var years = new[] { 2021, 2022, 2023 };
+        var salesData = new List<SaleInfo>();
+
+        foreach (var year in years)
+        {
+            foreach (var city in cities)
+            {
+                salesData.Add(new SaleInfo
+                    {
+                        OrderId = random.Next(1000, 9999),
+                        Region = "Italia",
+                        Country = "Italia",
+                        City = city,
+                        Amount = random.Next(50000, 200000),
+                        Date = new DateTime(year, random.Next(1, 13), random.Next(1, 28))
+                    });
+            }
+        }
+
+        WWSalesData = salesData;
+
+        // Qui potresti caricare l'immagine in base64 da un servizio o API
+        // Per ora utilizziamo un valore vuoto come placeholder
+        MapImageBase64 = string.Empty;
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task GetCurrentLocation()
+    {
+        try
+        {
+            // In un'implementazione reale, questa funzione chiamerebbe
+            // l'API Geolocation del browser tramite JSInterop
+            await js.InvokeVoidAsync("alert", "Aggiornamento posizione in corso...");
+
+            // Qui si aggiornerebbero le coordinate visualizzate
+            // StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await js.InvokeVoidAsync("alert", $"Errore durante l'aggiornamento della posizione: {ex.Message}");
+        }
+    }
+} 

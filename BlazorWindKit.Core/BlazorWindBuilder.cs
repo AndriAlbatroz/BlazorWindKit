@@ -32,33 +32,98 @@ public class BlazorWindBuilder
         return this;
     }
     
+    /// <summary>
+    /// Conditionally applies styles based on a boolean condition.
+    /// </summary>
+    /// <param name="condition">Boolean condition to evaluate</param>
+    /// <param name="builder">Builder function that returns styles to apply when condition is true</param>
+    /// <returns>The current builder instance for method chaining</returns>
     public BlazorWindBuilder When(bool condition, Func<BlazorWindBuilder, BlazorWindBuilder> builder)
     {
         if (condition)
         {
-            var innerBuilder = new BlazorWindBuilder();
-            var result = builder(innerBuilder);
-            foreach (var cls in result._classes)
-            {
-                _classes.Add(cls);
-            }
+            ApplyNestedBuilder(builder);
         }
         return this;
     }
 
+    /// <summary>
+    /// Conditionally applies styles based on a function that returns a boolean.
+    /// </summary>
+    /// <param name="condition">Function that returns a boolean condition</param>
+    /// <param name="builder">Builder function that returns styles to apply when condition is true</param>
+    /// <returns>The current builder instance for method chaining</returns>
     public BlazorWindBuilder When(Func<bool> condition, Func<BlazorWindBuilder, BlazorWindBuilder> builder)
     {
         if (condition())
         {
-            var innerBuilder = new BlazorWindBuilder();
-            var result = builder(innerBuilder);
-            foreach (var cls in result._classes)
+            ApplyNestedBuilder(builder);
+        }
+        return this;
+    }
+    
+    /// <summary>
+    /// Applies styles when the previous When condition was false. Must be chained after a When call.
+    /// </summary>
+    /// <param name="builder">Builder function that returns styles to apply</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Otherwise(Func<BlazorWindBuilder, BlazorWindBuilder> builder)
+    {
+        // Check if any previous When condition was true, we store this in a field
+        if (!_lastWhenResult)
+        {
+            ApplyNestedBuilder(builder);
+        }
+        return this;
+    }
+    
+    /// <summary>
+    /// Applies the first builder function where the condition is true, similar to a switch statement.
+    /// </summary>
+    /// <param name="cases">Array of tuples containing condition and builder pairs</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Switch(params (bool condition, Func<BlazorWindBuilder, BlazorWindBuilder> builder)[] cases)
+    {
+        foreach (var (condition, builder) in cases)
+        {
+            if (condition)
             {
-                _classes.Add(cls);
+                ApplyNestedBuilder(builder);
+                return this;
             }
         }
         return this;
     }
+    
+    /// <summary>
+    /// Applies a default case if none of the conditions in a Switch were true.
+    /// </summary>
+    /// <param name="builder">Builder function that returns styles to apply</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Default(Func<BlazorWindBuilder, BlazorWindBuilder> builder)
+    {
+        if (!_switchMatched)
+        {
+            ApplyNestedBuilder(builder);
+        }
+        return this;
+    }
+    
+    // Private helper to apply a nested builder
+    private void ApplyNestedBuilder(Func<BlazorWindBuilder, BlazorWindBuilder> builder)
+    {
+        var innerBuilder = new BlazorWindBuilder();
+        var result = builder(innerBuilder);
+        foreach (var cls in result._classes)
+        {
+            _classes.Add(cls);
+        }
+        _lastWhenResult = true;
+    }
+    
+    // Fields to track conditional states
+    private bool _lastWhenResult = false;
+    private bool _switchMatched = false;
 
     public BlazorWindBuilder Custom(string rawCssClass) => Add(rawCssClass);
 
@@ -168,12 +233,24 @@ public class BlazorWindBuilder
 
     #region Spacing
 
-    public BlazorWindBuilder Padding(int value) => Add($"p-{value}");
-    public BlazorWindBuilder PaddingX(int value) => Add($"px-{value}");
-    public BlazorWindBuilder PaddingY(int value) => Add($"py-{value}");
     public BlazorWindBuilder Margin(int value) => Add($"m-{value}");
     public BlazorWindBuilder MarginX(int value) => Add($"mx-{value}");
     public BlazorWindBuilder MarginY(int value) => Add($"my-{value}");
+    public BlazorWindBuilder MarginTop(int value) => Add($"mt-{value}");
+    public BlazorWindBuilder MarginBottom(int value) => Add($"mb-{value}");
+    public BlazorWindBuilder MarginRight(int value) => Add($"mr-{value}");
+    public BlazorWindBuilder MarginLeft(int value) => Add($"ml-{value}");
+
+
+    public BlazorWindBuilder Padding(int value) => Add($"p-{value}");
+    public BlazorWindBuilder PaddingX(int value) => Add($"px-{value}");
+    public BlazorWindBuilder PaddingY(int value) => Add($"py-{value}");
+    public BlazorWindBuilder PaddingTop(int value) => Add($"pt-{value}");
+    public BlazorWindBuilder PaddingBottom(int value) => Add($"pb-{value}");
+    public BlazorWindBuilder PaddingRight(int value) => Add($"pr-{value}");
+    public BlazorWindBuilder PaddingLeft(int value) => Add($"pl-{value}");
+
+
     public BlazorWindBuilder Gap(int value) => Add($"gap-{value}");
     public BlazorWindBuilder GapX(int value) => Add($"gap-x-{value}");
     public BlazorWindBuilder GapY(int value) => Add($"gap-y-{value}");
@@ -186,11 +263,17 @@ public class BlazorWindBuilder
 
     public BlazorWindBuilder Width(int value) => Add($"w-{value}");
     public BlazorWindBuilder Height(int value) => Add($"h-{value}");
+    public BlazorWindBuilder Width(string value) => Add($"w-[{value}]");
+    public BlazorWindBuilder Height(string value) => Add($"h-[{value}]");
 
     public BlazorWindBuilder MinWidth(int value) => Add($"min-w-{value}");
     public BlazorWindBuilder MaxWidth(int value) => Add($"max-w-{value}");
+    public BlazorWindBuilder MinWidth(string value) => Add($"min-w-[{value}]");
+    public BlazorWindBuilder MaxWidth(string value) => Add($"max-w-[{value}]");
     public BlazorWindBuilder MinHeight(int value) => Add($"min-h-{value}");
+    public BlazorWindBuilder MinHeight(string value) => Add($"min-h-[{value}]");
     public BlazorWindBuilder MaxHeight(int value) => Add($"max-h-{value}");
+    public BlazorWindBuilder MaxHeight(string value) => Add($"max-h-[{value}]");
 
     // Special sizing values
     public BlazorWindBuilder WidthAuto() => Add("w-auto");
@@ -213,6 +296,12 @@ public class BlazorWindBuilder
     public BlazorWindBuilder RoundedBottom(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-b" }));
     public BlazorWindBuilder RoundedRight(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-r" }));
     public BlazorWindBuilder RoundedLeft(TwRounded rounded) => Add(rounded.ToTailwindClass(stringFormat: new string[] { "-l" }));
+
+    #endregion
+
+    #region Overflow
+
+    public BlazorWindBuilder Overflow(TwOverflow overflow) => Add(overflow.ToTailwindClass());
 
     #endregion
 
@@ -239,6 +328,8 @@ public class BlazorWindBuilder
     public BlazorWindBuilder BorderBottomWidth(int value) => Add(value == 1 ? "border-b" : $"border-b-{value}");
     public BlazorWindBuilder BorderLeftWidth(int value) => Add(value == 1 ? "border-l" : $"border-l-{value}");
     public BlazorWindBuilder Shadow(int value) => Add(value == 1 ? "shadow" : $"shadow-{value}");
+    public BlazorWindBuilder Shadow(TwShadow shadow) => Add(shadow.ToTailwindClass());
+    public BlazorWindBuilder Shadow(string value) => Add($"shadow-[{value}]");
 
     #endregion
 

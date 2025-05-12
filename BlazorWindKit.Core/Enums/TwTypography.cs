@@ -63,13 +63,13 @@ public enum TwFontWeight
     Medium,
 
     [TailwindClass("font-semibold")]
-    Semibold,
+    SemiBold,
 
     [TailwindClass("font-bold")]
     Bold,
 
     [TailwindClass("font-extrabold")]
-    Extrabold,
+    ExtraBold,
 
     [TailwindClass("font-black")]
     Black,

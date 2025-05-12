@@ -22,10 +22,18 @@ public class DropdownJsInterop : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        if (_moduleTask.IsValueCreated)
+        try
         {
-            var module = await _moduleTask.Value;
-            await module.DisposeAsync();
+            if (_moduleTask.IsValueCreated)
+            {
+                var module = await _moduleTask.Value;
+
+                if (module is not null)
+                {
+                    await module.DisposeAsync();
+                }
+            }
         }
+        catch { }
     }
 }

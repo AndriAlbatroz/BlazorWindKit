@@ -1,0 +1,99 @@
+﻿@inherits OwningComponentBase
+
+<div class="@RootCss">
+    @if (HeaderTemplate is not null)
+    {
+        <div class="@HeaderCss">
+            @HeaderTemplate
+        </div>
+    }
+    <div class="@BodyCss">
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+    </div>
+    @if (FooterTemplate is not null)
+    {
+        <div class="@FooterCss">
+            @FooterTemplate
+        </div>
+    }
+</div>
+
+@code {
+    #region Template Parameters
+    [Parameter] public RenderFragment? HeaderTemplate { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
+    #endregion
+
+    #region Style Parameters
+    [Parameter] public string? RootCssClass { get; set; }
+    [Parameter] public string? HeaderCssClass { get; set; }
+    [Parameter] public string? BodyCssClass { get; set; }
+    [Parameter] public string? FooterCssClass { get; set; }
+    #endregion
+
+    #region Style Override Parameters
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultRootClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultHeaderClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultBodyClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultFooterClass { get; set; }
+    #endregion
+
+    #region Computed Properties
+    private string RootCss => (OverrideDefaultRootClass?.Invoke(DefaultRootStyle()) ?? DefaultRootStyle()).Build();
+    private string HeaderCss => (OverrideDefaultHeaderClass?.Invoke(DefaultHeaderStyle()) ?? DefaultHeaderStyle()).Build();
+    private string BodyCss => (OverrideDefaultBodyClass?.Invoke(DefaultBodyStyle()) ?? DefaultBodyStyle()).Build();
+    private string FooterCss => (OverrideDefaultFooterClass?.Invoke(DefaultFooterStyle()) ?? DefaultFooterStyle()).Build();
+    #endregion
+
+    #region Default Styles
+    private BlazorWindBuilder DefaultRootStyle() => BlazorWindBuilder.Create()
+        .Position(TwPosition.Relative)
+        .BackgroundColor(TwColor.White)
+        .Rounded(TwRounded.Xl)
+        .Custom("drop-shadow-md")
+        .Custom("overflow-hidden")
+        .Transition(TwTransition.All)
+        .Custom("duration-350")
+        .Custom("ease-in-out")
+        .Custom("animate-fade-in")
+        .Custom("transform-gpu")
+        .Custom("backface-visibility-hidden")
+        .Custom("will-change-transform")
+        .Hover(h => h
+            .Custom("drop-shadow-xl")
+        )
+        .Display(TwDisplay.Flex)
+        .FlexDirection(TwFlexDirection.Col)
+        .Custom("h-auto");
+
+    private BlazorWindBuilder DefaultHeaderStyle() => BlazorWindBuilder.Create()
+        .BackgroundColor(TwColor.Blue, 500)
+        .TextColor(TwColor.White)
+        .PaddingX(5)
+        .PaddingY(4)
+        .Display(TwDisplay.Flex)
+        .Justify(TwJustifyContent.Between)
+        .Items(TwAlignItems.Center)
+        .Custom("flex-shrink-0");
+
+    private BlazorWindBuilder DefaultBodyStyle() => BlazorWindBuilder.Create()
+        .PaddingX(5)
+        .PaddingY(4)
+        .Custom("flex-grow")
+        .Display(TwDisplay.Flex)
+        .FlexDirection(TwFlexDirection.Col)
+        .Custom("h-auto");
+
+    private BlazorWindBuilder DefaultFooterStyle() => BlazorWindBuilder.Create()
+        .PaddingX(4)
+        .PaddingY(3)
+        .BorderTopWidth(1)
+        .BorderColor(TwColor.Gray, 200)
+        .BackgroundColor(TwColor.Gray, 50)
+        .Custom("flex-shrink-0");
+    #endregion
+} 

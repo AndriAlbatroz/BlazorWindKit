@@ -1,0 +1,143 @@
+@using BlazorWindKit.Core;
+@using BlazorWindKit.Core.Enums;
+
+<div class="@ContainerCss">
+    <div class="@ContentCss">
+        <div class="@GridCss">
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    #region Template Parameters
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    #endregion
+
+    #region Grid Configuration
+    [Parameter] public int? GridColsSm { get; set; }
+    [Parameter] public int? GridColsMd { get; set; }
+    [Parameter] public int? GridColsLg { get; set; }
+    [Parameter] public int? GridColsXl { get; set; }
+    [Parameter] public int? GridGap { get; set; } = 4;
+    [Parameter] public int? GridMarginTop { get; set; }
+    [Parameter] public int? ContainerPadding { get; set; } = 6;
+    [Parameter] public bool EnableShadowSpace { get; set; } = true;
+    #endregion
+
+    #region Style Override Parameters
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultContainerClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultContentClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultGridClass { get; set; }
+    #endregion
+
+    #region Computed Properties
+    private string ContainerCss => (OverrideDefaultContainerClass?.Invoke(DefaultContainerStyle()) ?? DefaultContainerStyle()).Build();
+    private string ContentCss => (OverrideDefaultContentClass?.Invoke(DefaultContentStyle()) ?? DefaultContentStyle()).Build();
+    private string GridCss => (OverrideDefaultGridClass?.Invoke(DefaultGridStyle()) ?? DefaultGridStyle()).Build();
+    #endregion
+
+    private BlazorWindBuilder DefaultContainerStyle() => BlazorWindBuilder.Create()
+        .Custom("w-full")
+        .Padding(ContainerPadding ?? 6)
+        .Custom("mb-6")
+        .Custom("last:mb-0")
+        .Custom("flex")
+        .Custom("flex-col")
+        .Custom("relative")
+        .Custom("isolate")
+        .Custom("h-auto");
+
+    private BlazorWindBuilder DefaultContentStyle() => BlazorWindBuilder.Create()
+        .Custom("w-full")
+        .Gap(4)
+        .Custom("flex")
+        .Custom("flex-col")
+        .Custom("relative")
+        .Custom("isolate")
+        .Custom("h-auto");
+
+    private BlazorWindBuilder DefaultGridStyle()
+    {
+        var builder = BlazorWindBuilder.Create()
+            .Display(TwDisplay.Grid)
+            .Gap(GridGap ?? 4)
+            .WidthFull()
+            .Custom("overflow-visible")
+            .Custom("relative")
+            .Custom("isolate")
+            .Custom("auto-rows-auto")
+            .Custom("h-auto");
+
+        // Responsive grid columns with better defaults
+        if (GridColsSm.HasValue)
+        {
+            builder.Custom($"grid-cols-{GridColsSm.Value}");
+        }
+        else
+        {
+            builder.Custom("grid-cols-1");
+        }
+
+        if (GridColsMd.HasValue)
+        {
+            builder.Md(m => m.Custom($"grid-cols-{GridColsMd.Value}"));
+        }
+        else if (GridColsSm.HasValue)
+        {
+            builder.Md(m => m.Custom($"grid-cols-{GridColsSm.Value}"));
+        }
+        else
+        {
+            builder.Md(m => m.Custom("grid-cols-2"));
+        }
+
+        if (GridColsLg.HasValue)
+        {
+            builder.Lg(l => l.Custom($"grid-cols-{GridColsLg.Value}"));
+        }
+        else if (GridColsMd.HasValue)
+        {
+            builder.Lg(l => l.Custom($"grid-cols-{GridColsMd.Value}"));
+        }
+        else if (GridColsSm.HasValue)
+        {
+            builder.Lg(l => l.Custom($"grid-cols-{GridColsSm.Value}"));
+        }
+        else
+        {
+            builder.Lg(l => l.Custom("grid-cols-3"));
+        }
+
+        if (GridColsXl.HasValue)
+        {
+            builder.Xl(x => x.Custom($"grid-cols-{GridColsXl.Value}"));
+        }
+        else if (GridColsLg.HasValue)
+        {
+            builder.Xl(x => x.Custom($"grid-cols-{GridColsLg.Value}"));
+        }
+        else if (GridColsMd.HasValue)
+        {
+            builder.Xl(x => x.Custom($"grid-cols-{GridColsMd.Value}"));
+        }
+        else if (GridColsSm.HasValue)
+        {
+            builder.Xl(x => x.Custom($"grid-cols-{GridColsSm.Value}"));
+        }
+        else
+        {
+            builder.Xl(x => x.Custom("grid-cols-4"));
+        }
+
+        if (GridMarginTop.HasValue)
+        {
+            builder.MarginTop(GridMarginTop.Value);
+        }
+
+        return builder;
+    }
+} 

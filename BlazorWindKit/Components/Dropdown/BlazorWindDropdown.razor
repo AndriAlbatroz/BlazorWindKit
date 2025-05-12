@@ -1,61 +1,68 @@
-@using BlazorWindKit.Core;
-@using BlazorWindKit.Core.Enums;
-@using Microsoft.JSInterop
-@using BlazorWindKit.JsInterop
-
 @typeparam TItem
 @inherits OwningComponentBase
 
 @inject DropdownJsInterop DropdownJsInterop
 
-<div class="relative @(RootCssClass ?? "w-full")" @ref="DropdownRef">
+<div class="@(RootCssClass ?? DefaultRootStyle().Build())" @ref="DropdownRef">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label for="@MenuId" class="@LabelCss">
+            @Label
+            @if (Required)
+            {
+                <span class="text-red-500 ml-1">*</span>
+            }
+        </label>
+    }
+
     <button onclick="@ToggleDropdown" 
-            type="button" 
-            class="@ToggleCss"
-            disabled="@Disabled"
-            aria-expanded="@IsOpen"
-            aria-haspopup="listbox"
-            aria-controls="@MenuId">
+    type="button" 
+    class="@ToggleCss"
+    disabled="@Disabled"
+    aria-expanded="@IsOpen"
+    aria-haspopup="listbox"
+    aria-controls="@MenuId">
         <span class="flex items-center justify-between w-full @TextCss">
             <span class="block truncate text-inherit">@SelectedText</span>
-            <svg class="w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-150 text-inherit @(IsOpen ? "rotate-180" : "")"
-                 fill="none" 
-                 stroke="currentColor" 
-                 stroke-width="2" 
-                 viewBox="0 0 24 24"
-                 aria-hidden="true">
+            <svg class="@ChevronCss"
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            viewBox="0 0 24 24"
+            aria-hidden="true">
                 <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </span>
     </button>
 
     <div id="@MenuId"
-         class="@MenuCss"
-         role="listbox"
-         aria-label="@AriaLabel"
-         style="max-height:@(IsOpen ? MenuMaxHeightWhenOpen : "0px"); 
-                opacity:@(IsOpen ? "1" : "0"); 
-                transform:@(IsOpen ? "scale(1)" : "scale(0.95)");
-                @(MenuDisplayMode == TwDropdownMenuDisplayMode.Overlay && !string.IsNullOrWhiteSpace(MenuMaxHeightWhenOpen) ? "overflow-y: auto;" : "")">
+    class="@MenuCss"
+    role="listbox"
+    aria-label="@AriaLabel"
+    style="max-height:@(IsOpen ? MenuMaxHeightWhenOpen : "0px"); 
+           opacity:@(IsOpen ? "1" : "0");">
         @if (Items?.Any() == true)
         {
-            @foreach (var item in Items)
-            {
-                var isSelected = EqualityComparer<TItem>.Default.Equals(item, Value);
-                <button onclick="@(() => SelectItem(item))" 
-                class="@ItemCss"
-                role="option"
-                aria-selected="@isSelected">
-                    @if (ItemTemplate is not null)
-                    {
-                        @ItemTemplate(item)
-                    }
-                    else
-                    {
-                        <span class="block truncate text-inherit">@ItemToString(item)</span>
-                    }
-                </button>
-            }
+            <ul class="divide-y divide-gray-100">
+                @foreach (var item in Items)
+                {
+                    var isSelected = EqualityComparer<TItem>.Default.Equals(item, SelectedItem);
+                    <li onclick="@(() => SelectItem(item))" 
+                    class="@ItemCss"
+                    role="option"
+                    tabindex="0"
+                    aria-selected="@isSelected">
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            <span class="block truncate text-inherit">@ItemToString(item)</span>
+                        }
+                    </li>
+                }
+            </ul>
         }
         else if (EmptyTemplate is not null)
         {
@@ -74,9 +81,11 @@
     [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
 
     #region Data Parameters
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public bool Required { get; set; }
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
-    [Parameter] public TItem? Value { get; set; }
-    [Parameter] public EventCallback<TItem?> ValueChanged { get; set; }
+    [Parameter] public TItem? SelectedItem { get; set; }
+    [Parameter] public EventCallback<TItem?> SelectedItemChanged { get; set; }
     [Parameter] public string Placeholder { get; set; } = "Select...";
     [Parameter] public Func<TItem, string>? ItemTextSelector { get; set; }
     [Parameter] public Func<TItem, TItem, bool>? ItemComparer { get; set; }
@@ -94,6 +103,7 @@
     [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? ItemClass { get; set; }
     [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? TextClass { get; set; }
     [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? EmptyClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? LabelClass { get; set; }
     #endregion
 
     #region Style Override Parameters
@@ -102,6 +112,7 @@
     [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultItemClass { get; set; }
     [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultTextClass { get; set; }
     [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultEmptyClass { get; set; }
+    [Parameter] public Func<BlazorWindBuilder, BlazorWindBuilder>? OverrideDefaultLabelClass { get; set; }
     #endregion
 
     #region Behavior Parameters
@@ -130,7 +141,7 @@
     #endregion
 
     #region Computed Properties
-    private string SelectedText => Value is null ? Placeholder : ItemToString(Value);
+    private string SelectedText => SelectedItem is null ? Placeholder : ItemToString(SelectedItem);
     private string ItemToString(TItem? item) => item is null ? "" : (ItemTextSelector?.Invoke(item) ?? item.ToString() ?? "");
 
     private string ToggleCss => (ToggleButtonClass?.Invoke(BlazorWindBuilder.Create()) ??
@@ -152,100 +163,111 @@
     private string EmptyCss => (EmptyClass?.Invoke(BlazorWindBuilder.Create()) ??
                               (OverrideDefaultEmptyClass?.Invoke(DefaultEmptyStyle()) ?? 
                                DefaultEmptyStyle())).Build();
+
+    private string LabelCss => (LabelClass?.Invoke(BlazorWindBuilder.Create()) ??
+                              (OverrideDefaultLabelClass?.Invoke(DefaultLabelStyle()) ?? 
+                               DefaultLabelStyle())).Build();
+
+    private string ChevronCss => BlazorWindBuilder.Create()
+        .Width(4)
+        .Height(4)
+        .MarginLeft(2)
+        .Custom("flex-shrink-0")
+        .TextColor(TwColor.Gray, 700)
+        .Transition(TwTransition.All)
+        .Custom("duration-200")
+        .Custom(IsOpen ? "rotate-180" : "")
+        .Build();
     #endregion
 
     #region Default Styles
+    private BlazorWindBuilder DefaultRootStyle() => BlazorWindBuilder.Create()
+        .Position(TwPosition.Relative)
+        .WidthFull();
 
-    private BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
-            .Display(TwDisplay.Flex)
-            .Items(TwAlignItems.Center)
-            .Gap(3)
-            .WidthFull()
-            .PaddingX(4)
-            .PaddingY(2)
-            .BackgroundColor(TwColor.White)
-            .BorderWidth(1)
-            .BorderColor(TwColor.Gray, 200)
-            .TextColor(TwColor.Gray, 800)
-            .FontSize(TwTextSize.Sm)
-            .FontWeight(TwFontWeight.Medium)
-            .Custom("shadow-sm")
-            .Transition(TwTransition.All)
-            .Custom("duration-200 ease-in-out")
-            .Rounded(TwRounded.Md)
-            .Hover(b => b
-                .BackgroundColor(TwColor.Gray, 50)
-                .BorderColor(TwColor.Gray, 300)
-                .Custom("shadow-md")
-            )
-            .Focus(b => b
-                .Outline(TwOutline.None)
-                .Ring(2)
-                .RingColor(TwColor.Blue, 500, 10)
-                .BorderColor(TwColor.Blue, 400)
-                .Custom("shadow-md")
-            )
-            .Disabled(b => b
-                .Opacity(60)
-                .Custom("cursor-not-allowed")
-                .Custom("shadow-none")
-            );
-
-    private BlazorWindBuilder DefaultTextStyle() => BlazorWindBuilder.Create()
-        .FontSize(TwTextSize.Sm)
-        .TextColor(TwColor.Gray, 800)
-        .FontWeight(TwFontWeight.Medium)
-        .Custom("tracking-wide")
+    private BlazorWindBuilder DefaultLabelStyle() => BlazorWindBuilder.Create()
+        .Display(TwDisplay.Block)
+        .MarginBottom(1)
+        .Custom("text-[8px]")
+        .FontWeight(TwFontWeight.Light)
+        .TextColor(TwColor.White)
         .Sm(s => s
             .FontSize(TwTextSize.Base)
         );
 
-    private BlazorWindBuilder DefaultItemStyle() => BlazorWindBuilder.Create()
+    private BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
         .Display(TwDisplay.Flex)
         .Items(TwAlignItems.Center)
         .Justify(TwJustifyContent.Between)
         .WidthFull()
-        .PaddingX(4)
+        .BackgroundColor(TwColor.White)
+        .BorderWidth(1)
+        .BorderColor(TwColor.Gray, 300)
+        .Rounded(TwRounded.Md)
+        .Shadow(1)
+        .PaddingX(3)
         .PaddingY(2)
-        .TextAlign(TwTextAlign.Left)
-        .TextColor(TwColor.Gray, 700)
         .FontSize(TwTextSize.Sm)
         .FontWeight(TwFontWeight.Medium)
+        .TextColor(TwColor.Gray, 700)
         .Transition(TwTransition.All)
-        .Custom("duration-150 ease-in-out cursor-pointer select-none")
-        .Hover(h => h
+        .Custom("duration-150")
+        .Hover(b => b
             .BackgroundColor(TwColor.Gray, 50)
-            .TextColor(TwColor.Gray, 900)
-            .Custom("translate-x-1")
         )
-        .Focus(f => f
-            .BackgroundColor(TwColor.Blue, 50)
-            .TextColor(TwColor.Blue, 700)
-            .Custom("outline-none translate-x-1")
+        .Focus(b => b
+            .Outline(TwOutline.None)
+            .Ring(2)
+            .RingColor(TwColor.Blue, 500)
+            .BorderColor(TwColor.Blue, 500)
         )
-        .Sm(s => s
-            .PaddingX(5)
-            .PaddingY(3)
+        .Disabled(b => b
+            .Opacity(50)
+            .Custom("cursor-not-allowed")
+        );
+
+    private BlazorWindBuilder DefaultTextStyle() => BlazorWindBuilder.Create()
+        .TextColor(TwColor.Gray, 700)
+        .FontWeight(TwFontWeight.Medium);
+
+    private BlazorWindBuilder DefaultItemStyle() => BlazorWindBuilder.Create()
+        .WidthFull()
+        .TextAlign(TwTextAlign.Left)
+        .PaddingX(3)
+        .PaddingY(2)
+        .FontSize(TwTextSize.Sm)
+        .TextColor(TwColor.Gray, 900)
+        .Custom("cursor-pointer")
+        .Custom("truncate")
+        .Hover(b => b
+            .BackgroundColor(TwColor.Gray, 100)
+        )
+        .Focus(b => b
+            .BackgroundColor(TwColor.Gray, 100)
         );
 
     private BlazorWindBuilder DefaultEmptyStyle() => BlazorWindBuilder.Create()
-        .Display(TwDisplay.Flex)
-        .Items(TwAlignItems.Center)
-        .Justify(TwJustifyContent.Center)
-        .WidthFull()
-        .PaddingX(4)
-        .PaddingY(8)
-        .TextColor(TwColor.Gray, 400)
+        .PaddingX(3)
+        .PaddingY(2)
         .FontSize(TwTextSize.Sm)
-        .FontWeight(TwFontWeight.Medium)
-        .Custom("cursor-default")
-        .Sm(s => s
-            .PaddingY(10)
-        );
+        .TextColor(TwColor.Gray, 500)
+        .TextAlign(TwTextAlign.Center);
 
     private BlazorWindBuilder DefaultMenuStyle()
     {
-        var builder = BlazorWindBuilder.Create();
+        var builder = BlazorWindBuilder.Create()
+            .Position(TwPosition.Absolute)
+            .ZIndex(10)
+            .MarginTop(1)
+            .WidthFull()
+            .BackgroundColor(TwColor.White)
+            .BorderWidth(1)
+            .BorderColor(TwColor.Gray, 300)
+            .Rounded(TwRounded.Md)
+            .Shadow(8)
+            .Transition(TwTransition.All)
+            .Custom("duration-200")
+            .Custom("overflow-hidden");
 
         if (MenuDisplayMode == TwDropdownMenuDisplayMode.Overlay)
         {
@@ -257,12 +279,8 @@
                    .Custom("shadow-lg")
                    .Custom("backdrop-blur-md bg-white/95")
                    .PaddingY(1)
-                   .Transition(TwTransition.All)
-                   .Custom("duration-200 ease-in-out")
-                   .Custom("transform-gpu")
                    .Focus(b => b
                        .Outline(TwOutline.None)
-                       .Transform(TwTransform.Gpu)
                    )
                    .Sm(s => s
                        .Width(64)
@@ -272,32 +290,29 @@
             switch (Direction)
             {
                 case TwDropdownDirection.TopLeft:
-                    builder.Custom("bottom-full mb-2 origin-bottom-left left-0");
+                    builder.Custom("bottom-full mb-2 left-0");
                     break;
                 case TwDropdownDirection.TopRight:
-                    builder.Custom("bottom-full mb-2 origin-bottom-right right-0");
+                    builder.Custom("bottom-full mb-2 right-0");
                     break;
                 case TwDropdownDirection.BottomRight:
-                    builder.Custom("top-full mt-2 origin-top-right right-0");
+                    builder.Custom("top-full mt-2 right-0");
                     break;
                 case TwDropdownDirection.BottomLeft:
                 default:
-                    builder.Custom("top-full mt-2 origin-top-left left-0");
+                    builder.Custom("top-full mt-2 left-0");
                     break;
             }
         }
         else // InFlowPush
         {
             builder.Custom("w-full overflow-hidden")
-                   .MarginX(5)
-                   .BackgroundColor(TwColor.Gray, 200)
+                   .BackgroundColor(TwColor.White)
                    .BorderWidth(1)
+                   .BorderColor(TwColor.Gray, 200)
                    .Rounded(TwRounded.Md)
                    .Custom("shadow-lg")
                    .Custom("backdrop-blur-md")
-                   .Transition(TwTransition.All)
-                   .Custom("duration-200 ease-in-out")
-                   .Custom("transform-gpu")
                    .Custom("sticky top-0")
                    .Sm(s => s
                        .Custom("max-w-md mx-auto")
@@ -329,12 +344,12 @@
     {
         if (Disabled) return;
 
-        var oldValue = Value;
-        Value = item;
+        var oldValue = SelectedItem;
+        SelectedItem = item;
         
-        if (!EqualityComparer<TItem>.Default.Equals(oldValue, Value))
+        if (!EqualityComparer<TItem>.Default.Equals(oldValue, SelectedItem))
         {
-            await ValueChanged.InvokeAsync(Value);
+            await SelectedItemChanged.InvokeAsync(SelectedItem);
         }
 
         if (CloseOnSelect)
