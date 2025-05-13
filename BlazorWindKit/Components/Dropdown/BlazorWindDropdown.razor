@@ -192,13 +192,13 @@
         .FontWeight(TwFontWeight.Light)
         .TextColor(TwColor.White)
         .Sm(s => s
-            .FontSize(TwTextSize.Base)
+            .TextSize(TwTextSize.Base)
         );
 
     private BlazorWindBuilder DefaultToggleStyle() => BlazorWindBuilder.Create()
         .Display(TwDisplay.Flex)
-        .Items(TwAlignItems.Center)
-        .Justify(TwJustifyContent.Between)
+        .AlignItems(TwAlignItems.Center)
+        .JustifyContent(TwJustifyContent.Between)
         .WidthFull()
         .BackgroundColor(TwColor.White)
         .BorderWidth(1)
@@ -207,7 +207,7 @@
         .Shadow(1)
         .PaddingX(3)
         .PaddingY(2)
-        .FontSize(TwTextSize.Sm)
+        .TextSize(TwTextSize.Sm)
         .FontWeight(TwFontWeight.Medium)
         .TextColor(TwColor.Gray, 700)
         .Transition(TwTransition.All)
@@ -222,7 +222,6 @@
             .BorderColor(TwColor.Blue, 500)
         )
         .Disabled(b => b
-            .Opacity(50)
             .Custom("cursor-not-allowed")
         );
 
@@ -235,7 +234,7 @@
         .TextAlign(TwTextAlign.Left)
         .PaddingX(3)
         .PaddingY(2)
-        .FontSize(TwTextSize.Sm)
+        .TextSize(TwTextSize.Sm)
         .TextColor(TwColor.Gray, 900)
         .Custom("cursor-pointer")
         .Custom("truncate")
@@ -249,7 +248,7 @@
     private BlazorWindBuilder DefaultEmptyStyle() => BlazorWindBuilder.Create()
         .PaddingX(3)
         .PaddingY(2)
-        .FontSize(TwTextSize.Sm)
+        .TextSize(TwTextSize.Sm)
         .TextColor(TwColor.Gray, 500)
         .TextAlign(TwTextAlign.Center);
 
@@ -257,7 +256,7 @@
     {
         var builder = BlazorWindBuilder.Create()
             .Position(TwPosition.Absolute)
-            .ZIndex(10)
+            .Custom("z-index-10")
             .MarginTop(1)
             .WidthFull()
             .BackgroundColor(TwColor.White)

@@ -203,9 +203,6 @@ public class BlazorWindBuilder
     public BlazorWindBuilder DivideColor(TwColor color, int shade) => Add(color.ToTailwindClass("divide", shade));
     public BlazorWindBuilder DivideColor(TwColor color, int shade, int opacity) => Add(color.ToTailwindClass("divide", shade, opacity));
 
-    public BlazorWindBuilder RingColor(TwColor color, int shade) => Add(color.ToTailwindClass("ring", shade));
-    public BlazorWindBuilder RingColor(TwColor color, int shade, int opacity) => Add(color.ToTailwindClass("ring", shade, opacity));
-
     public BlazorWindBuilder RingOffsetColor(TwColor color, int shade) => Add(color.ToTailwindClass("ring-offset", shade));
     public BlazorWindBuilder RingOffsetColor(TwColor color, int shade, int opacity) => Add(color.ToTailwindClass("ring-offset", shade, opacity));
 
@@ -223,14 +220,6 @@ public class BlazorWindBuilder
 
     #endregion
 
-    #region Ring
-
-    public BlazorWindBuilder Ring(int width) => Add($"ring-{width}");
-    public BlazorWindBuilder RingInset() => Add($"ring-inset");
-
-
-    #endregion
-
     #region Spacing
 
     public BlazorWindBuilder Margin(int value) => Add($"m-{value}");
@@ -241,7 +230,6 @@ public class BlazorWindBuilder
     public BlazorWindBuilder MarginRight(int value) => Add($"mr-{value}");
     public BlazorWindBuilder MarginLeft(int value) => Add($"ml-{value}");
 
-
     public BlazorWindBuilder Padding(int value) => Add($"p-{value}");
     public BlazorWindBuilder PaddingX(int value) => Add($"px-{value}");
     public BlazorWindBuilder PaddingY(int value) => Add($"py-{value}");
@@ -249,7 +237,6 @@ public class BlazorWindBuilder
     public BlazorWindBuilder PaddingBottom(int value) => Add($"pb-{value}");
     public BlazorWindBuilder PaddingRight(int value) => Add($"pr-{value}");
     public BlazorWindBuilder PaddingLeft(int value) => Add($"pl-{value}");
-
 
     public BlazorWindBuilder Gap(int value) => Add($"gap-{value}");
     public BlazorWindBuilder GapX(int value) => Add($"gap-x-{value}");
@@ -307,8 +294,8 @@ public class BlazorWindBuilder
 
     #region Typography
 
-    public BlazorWindBuilder FontSize(TwTextSize size) => Add(size.ToTailwindClass());
-    public BlazorWindBuilder FontSize(TwTextSize size, int lineHeight) => Add($"{size.ToTailwindClass()}/{lineHeight}"  );
+    public BlazorWindBuilder TextSize(TwTextSize size) => Add(size.ToTailwindClass());
+    public BlazorWindBuilder TextSize(TwTextSize size, int lineHeight) => Add($"{size.ToTailwindClass()}/{lineHeight}");
     public BlazorWindBuilder FontWeight(TwFontWeight weight) => Add(weight.ToTailwindClass());
     public BlazorWindBuilder TextAlign(TwTextAlign align) => Add(align.ToTailwindClass());
     public BlazorWindBuilder TextDecoration(TwTextDecoration decoration) => Add(decoration.ToTailwindClass());
@@ -327,119 +314,181 @@ public class BlazorWindBuilder
     public BlazorWindBuilder BorderRightWidth(int value) => Add(value == 1 ? "border-r" : $"border-r-{value}");
     public BlazorWindBuilder BorderBottomWidth(int value) => Add(value == 1 ? "border-b" : $"border-b-{value}");
     public BlazorWindBuilder BorderLeftWidth(int value) => Add(value == 1 ? "border-l" : $"border-l-{value}");
-    public BlazorWindBuilder Shadow(int value) => Add(value == 1 ? "shadow" : $"shadow-{value}");
+    
+    // Regular Shadow methods
     public BlazorWindBuilder Shadow(TwShadow shadow) => Add(shadow.ToTailwindClass());
+    public BlazorWindBuilder Shadow(int value) => Add(value == 1 ? "shadow" : $"shadow-{value}");
+    
+    /// <summary>
+    /// Adds a custom shadow value
+    /// </summary>
+    /// <param name="value">Custom shadow value</param>
+    /// <returns>The current builder instance for method chaining</returns>
     public BlazorWindBuilder Shadow(string value) => Add($"shadow-[{value}]");
-
-    #endregion
-
-    #region Effects
-
-    public BlazorWindBuilder Opacity(int value) => Add($"opacity-{value}");
     
-    // Backdrop blur special values
-    public BlazorWindBuilder BackdropBlurNone() => Add("backdrop-blur-none");
-    public BlazorWindBuilder BackdropBlurSm() => Add("backdrop-blur-sm");
-    public BlazorWindBuilder BackdropBlurMd() => Add("backdrop-blur-md");
-    public BlazorWindBuilder BackdropBlurLg() => Add("backdrop-blur-lg");
-    public BlazorWindBuilder BackdropBlurXl() => Add("backdrop-blur-xl");
-    public BlazorWindBuilder BackdropBlur2Xl() => Add("backdrop-blur-2xl");
-    public BlazorWindBuilder BackdropBlur3Xl() => Add("backdrop-blur-3xl");
+    /// <summary>
+    /// Adds a shadow with a specific color
+    /// </summary>
+    /// <param name="shadow">The shadow size</param>
+    /// <param name="color">The color to apply to the shadow</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Shadow(TwShadow shadow, TwColor color) => Add(shadow.ToTailwindClass()).Add($"shadow-{color.ToString().ToLower()}");
     
-    // Other backdrop effects
-    public BlazorWindBuilder BackdropBrightness(int value) => Add($"backdrop-brightness-{value}");
-    public BlazorWindBuilder BackdropContrast(int value) => Add($"backdrop-contrast-{value}");
-    public BlazorWindBuilder BackdropGrayscale(int value) => Add($"backdrop-grayscale-{value}");
-    public BlazorWindBuilder BackdropHueRotate(int value) => Add($"backdrop-hue-rotate-{value}");
-    public BlazorWindBuilder BackdropInvert(int value) => Add($"backdrop-invert-{value}");
-    public BlazorWindBuilder BackdropOpacity(int value) => Add($"backdrop-opacity-{value}");
-    public BlazorWindBuilder BackdropSaturate(int value) => Add($"backdrop-saturate-{value}");
-    public BlazorWindBuilder BackdropSepia(int value) => Add($"backdrop-sepia-{value}");
-
-    #endregion
-
-    #region Transition
-    public BlazorWindBuilder Transition(TwTransition transition) => Add(transition.ToTailwindClass());
-    public BlazorWindBuilder TransitionDuration(TwTransition duration) => Add(duration.ToTailwindClass());
-    public BlazorWindBuilder TransitionEase(TwTransition ease) => Add(ease.ToTailwindClass());
-    public BlazorWindBuilder TransitionDelay(TwTransition delay) => Add(delay.ToTailwindClass());
-    #endregion
-
-    #region Transform
-    public BlazorWindBuilder Transform(TwTransform transform) => Add(transform.ToTailwindClass());
-    public BlazorWindBuilder TransformOrigin(TwTransform origin) => Add(origin.ToTailwindClass());
+    /// <summary>
+    /// Adds a shadow with a specific color and shade
+    /// </summary>
+    /// <param name="shadow">The shadow size</param>
+    /// <param name="color">The color to apply to the shadow</param>
+    /// <param name="shade">The shade of the color</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Shadow(TwShadow shadow, TwColor color, int shade) => Add(shadow.ToTailwindClass()).Add($"shadow-{color.ToString().ToLower()}-{shade}");
     
-    // Scale methods with numeric values
-    public BlazorWindBuilder Scale(int value) => Add($"scale-{value}");
-    public BlazorWindBuilder ScaleX(int value) => Add($"scale-x-{value}");
-    public BlazorWindBuilder ScaleY(int value) => Add($"scale-y-{value}");
+    /// <summary>
+    /// Adds a shadow with a specific color and opacity
+    /// </summary>
+    /// <param name="shadow">The shadow size</param>
+    /// <param name="color">The color to apply to the shadow</param>
+    /// <param name="opacity">Opacity value between 0 and 1</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Shadow(TwShadow shadow, TwColor color, double opacity) => Add(shadow.ToTailwindClass()).Add($"shadow-{color.ToString().ToLower()}/{opacity * 100}");
     
-    // Rotate methods with numeric values
-    public BlazorWindBuilder Rotate(int value) => Add($"rotate-{value}");
+    /// <summary>
+    /// Adds a shadow with a specified opacity
+    /// </summary>
+    /// <param name="shadow">The shadow size</param>
+    /// <param name="opacity">Opacity value between 0 and 1</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Shadow(TwShadow shadow, double opacity) => Add($"{shadow.ToTailwindClass()}/{opacity * 100}");
+
+    // Inset Shadow methods
+    /// <summary>
+    /// Adds an inset shadow using the predefined inset shadow values
+    /// </summary>
+    /// <param name="shadow">The inset shadow to apply</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetShadow(TwInsetShadow shadow) => Add(shadow.ToTailwindClass());
     
-    // Translate methods with numeric values
-    public BlazorWindBuilder TranslateX(int value) => Add($"translate-x-{value}");
-    public BlazorWindBuilder TranslateY(int value) => Add($"translate-y-{value}");
+    /// <summary>
+    /// Adds a custom inset shadow value
+    /// </summary>
+    /// <param name="value">Custom inset shadow value</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetShadow(string value) => Add($"inset-shadow-[{value}]");
     
-    // Skew methods with numeric values
-    public BlazorWindBuilder SkewX(int value) => Add($"skew-x-{value}");
-    public BlazorWindBuilder SkewY(int value) => Add($"skew-y-{value}");
-    #endregion
-
-    #region Interactivity
-
-    public BlazorWindBuilder Cursor(TwInteractivity cursor) => Add(cursor.ToTailwindClass());
-    public BlazorWindBuilder Resize(TwInteractivity resize) => Add(resize.ToTailwindClass());
-    public BlazorWindBuilder Scroll(TwInteractivity scroll) => Add(scroll.ToTailwindClass());
-    public BlazorWindBuilder Touch(TwInteractivity touch) => Add(touch.ToTailwindClass());
-    public BlazorWindBuilder Select(TwInteractivity select) => Add(select.ToTailwindClass());
-
-    #endregion
-
-    #region Layout
-
-    public BlazorWindBuilder Position(TwPosition position) => Add(position.ToTailwindClass());
-    public BlazorWindBuilder Display(TwDisplay display) => Add(display.ToTailwindClass());
-    public BlazorWindBuilder FlexDirection(TwFlexDirection direction) => Add(direction.ToTailwindClass());
-    public BlazorWindBuilder Justify(TwJustifyContent justify) => Add(justify.ToTailwindClass());
-    public BlazorWindBuilder Items(TwAlignItems align) => Add(align.ToTailwindClass());
-    public BlazorWindBuilder Fixed() => Add("fixed");
-    public BlazorWindBuilder Inset(int value) => Add($"inset-{value}");
-    public BlazorWindBuilder Bottom(int value) => Add($"bottom-{value}");
-    public BlazorWindBuilder Right(int value) => Add($"right-{value}");
-    public BlazorWindBuilder ZIndex(int value) => Add($"z-{value}");
-    public BlazorWindBuilder GridCols(int value) => Add($"grid-cols-{value}");
-    public BlazorWindBuilder GridRows(int value) => Add($"grid-rows-{value}");
-    public BlazorWindBuilder GridFlow(string flow) => Add($"grid-flow-{flow}");
-    public BlazorWindBuilder GridAutoCols(string autoCols) => Add($"auto-cols-{autoCols}");
-    public BlazorWindBuilder GridAutoRows(string autoRows) => Add($"auto-rows-{autoRows}");
-    public BlazorWindBuilder GridAutoFlow(string autoFlow) => Add($"grid-flow-{autoFlow}");
-    public BlazorWindBuilder GridTemplateCols(string templateCols) => Add($"grid-cols-{templateCols}");
-    public BlazorWindBuilder GridTemplateRows(string templateRows) => Add($"grid-rows-{templateRows}");
-    public BlazorWindBuilder GridColStart(int value) => Add($"col-start-{value}");
-    public BlazorWindBuilder GridColEnd(int value) => Add($"col-end-{value}");
-    public BlazorWindBuilder GridRowStart(int value) => Add($"row-start-{value}");
-    public BlazorWindBuilder GridRowEnd(int value) => Add($"row-end-{value}");
-    public BlazorWindBuilder GridColSpan(int value) => Add($"col-span-{value}");
-    public BlazorWindBuilder GridRowSpan(int value) => Add($"row-span-{value}");
-
-    #endregion
-
-    #region Form
-
-    public BlazorWindBuilder Outline(TwOutline outline) => Add(outline.ToTailwindClass());
-    public BlazorWindBuilder FormInput() => Add("form-input");
-    public BlazorWindBuilder FormTextarea() => Add("form-textarea");
-    public BlazorWindBuilder FormSelect() => Add("form-select");
-    public BlazorWindBuilder FormCheckbox() => Add("form-checkbox");
-    public BlazorWindBuilder FormRadio() => Add("form-radio");
-    public BlazorWindBuilder FormFile() => Add("form-file");
-
-    #endregion
-
-    #region SVG
-
-    public BlazorWindBuilder StrokeWidth(int width) => Add($"stroke-{width}");
+    /// <summary>
+    /// Adds an inset shadow with a specific color
+    /// </summary>
+    /// <param name="shadow">The inset shadow size</param>
+    /// <param name="color">The color to apply to the inset shadow</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetShadow(TwInsetShadow shadow, TwColor color) => Add(shadow.ToTailwindClass()).Add($"inset-shadow-{color.ToString().ToLower()}");
+    
+    /// <summary>
+    /// Adds an inset shadow with a specific color and shade
+    /// </summary>
+    /// <param name="shadow">The inset shadow size</param>
+    /// <param name="color">The color to apply to the inset shadow</param>
+    /// <param name="shade">The shade of the color</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetShadow(TwInsetShadow shadow, TwColor color, int shade) => Add(shadow.ToTailwindClass()).Add($"inset-shadow-{color.ToString().ToLower()}-{shade}");
+    
+    /// <summary>
+    /// Adds an inset shadow with a specific color and opacity
+    /// </summary>
+    /// <param name="shadow">The inset shadow size</param>
+    /// <param name="color">The color to apply to the inset shadow</param>
+    /// <param name="opacity">Opacity value between 0 and 1</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetShadow(TwInsetShadow shadow, TwColor color, double opacity) => Add(shadow.ToTailwindClass()).Add($"inset-shadow-{color.ToString().ToLower()}/{opacity * 100}");
+    
+    /// <summary>
+    /// Adds an inset shadow with a specified opacity
+    /// </summary>
+    /// <param name="shadow">The inset shadow size</param>
+    /// <param name="opacity">Opacity value between 0 and 1</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetShadow(TwInsetShadow shadow, double opacity) => Add($"{shadow.ToTailwindClass()}/{opacity * 100}");
+    
+    // Ring methods
+    /// <summary>
+    /// Adds a ring with the specified width
+    /// </summary>
+    /// <param name="width">The width of the ring</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Ring(int width) => Add($"ring-{width}");
+    
+    /// <summary>
+    /// Adds an inset ring
+    /// </summary>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder RingInset() => Add($"ring-inset");
+    
+    /// <summary>
+    /// Adds a custom ring style
+    /// </summary>
+    /// <param name="value">Custom ring value</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder Ring(string value) => Add($"ring-[{value}]");
+    
+    /// <summary>
+    /// Adds a ring with a specific color
+    /// </summary>
+    /// <param name="color">The color to apply to the ring</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder RingColor(TwColor color) => Add($"ring-{color.ToString().ToLower()}");
+    
+    /// <summary>
+    /// Adds a ring with a specific color and shade
+    /// </summary>
+    /// <param name="color">The color to apply to the ring</param>
+    /// <param name="shade">The shade of the color</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder RingColor(TwColor color, int shade) => Add($"ring-{color.ToString().ToLower()}-{shade}");
+    
+    /// <summary>
+    /// Adds a ring with a specific color and opacity
+    /// </summary>
+    /// <param name="color">The color to apply to the ring</param>
+    /// <param name="opacity">Opacity value between 0 and 1</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder RingColor(TwColor color, double opacity) => Add($"ring-{color.ToString().ToLower()}/{opacity * 100}");
+    
+    /// <summary>
+    /// Adds an inset ring with a specified width
+    /// </summary>
+    /// <param name="width">The width of the inset ring</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetRing(int width) => Add($"inset-ring-{width}");
+    
+    /// <summary>
+    /// Adds a custom inset ring style
+    /// </summary>
+    /// <param name="value">Custom inset ring value</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetRing(string value) => Add($"inset-ring-[{value}]");
+    
+    /// <summary>
+    /// Adds an inset ring with a specific color
+    /// </summary>
+    /// <param name="color">The color to apply to the inset ring</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetRingColor(TwColor color) => Add($"inset-ring-{color.ToString().ToLower()}");
+    
+    /// <summary>
+    /// Adds an inset ring with a specific color and shade
+    /// </summary>
+    /// <param name="color">The color to apply to the inset ring</param>
+    /// <param name="shade">The shade of the color</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetRingColor(TwColor color, int shade) => Add($"inset-ring-{color.ToString().ToLower()}-{shade}");
+    
+    /// <summary>
+    /// Adds an inset ring with a specific color and opacity
+    /// </summary>
+    /// <param name="color">The color to apply to the inset ring</param>
+    /// <param name="opacity">Opacity value between 0 and 1</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public BlazorWindBuilder InsetRingColor(TwColor color, double opacity) => Add($"inset-ring-{color.ToString().ToLower()}/{opacity * 100}");
 
     #endregion
 
@@ -452,6 +501,38 @@ public class BlazorWindBuilder
 
     #region Animation
     public BlazorWindBuilder Animate(TwAnimation animation) => Add(animation.ToTailwindClass());
+    #endregion
+
+    #region Layout
+
+    public BlazorWindBuilder Display(TwDisplay display) => Add(display.ToTailwindClass());
+    public BlazorWindBuilder FlexDirection(TwFlexDirection direction) => Add(direction.ToTailwindClass());
+    public BlazorWindBuilder JustifyContent(TwJustifyContent justify) => Add(justify.ToTailwindClass());
+    public BlazorWindBuilder AlignItems(TwAlignItems align) => Add(align.ToTailwindClass());
+    public BlazorWindBuilder Position(TwPosition position) => Add(position.ToTailwindClass());
+    public BlazorWindBuilder MixBlendMode(TwMixBlendMode mode) => Add(mode.ToTailwindClass());
+    public BlazorWindBuilder Transform(TwTransform transform) => Add(transform.ToTailwindClass());
+    public BlazorWindBuilder Transition(TwTransition transition) => Add(transition.ToTailwindClass());
+    public BlazorWindBuilder BorderStyle(TwBorderStyle style) => Add(style.ToTailwindClass());
+    public BlazorWindBuilder Outline(TwOutline outline) => Add(outline.ToTailwindClass());
+
+    #endregion
+
+    #region Interactivity
+
+    public BlazorWindBuilder Cursor(TwCursor cursor) => Add(cursor.ToTailwindClass());
+    public BlazorWindBuilder Resize(TwResize resize) => Add(resize.ToTailwindClass());
+    public BlazorWindBuilder ScrollBehavior(TwScrollBehavior behavior) => Add(behavior.ToTailwindClass());
+    public BlazorWindBuilder TouchAction(TwTouchAction action) => Add(action.ToTailwindClass());
+    public BlazorWindBuilder Select(TwSelect select) => Add(select.ToTailwindClass());
+
+    #endregion
+
+    #region Dropdown
+
+    public BlazorWindBuilder DropdownDirection(TwDropdownDirection direction) => Add(direction.ToTailwindClass());
+    public BlazorWindBuilder DropdownMenuDisplayMode(TwDropdownMenuDisplayMode mode) => Add(mode.ToTailwindClass());
+
     #endregion
 
     public override string ToString() => string.Join(" ", _classes);
